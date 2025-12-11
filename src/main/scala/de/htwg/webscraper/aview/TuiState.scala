@@ -12,7 +12,6 @@ trait TuiState {
 
 class InitialState extends TuiState {
   override def displayPrompt(): Unit = {
-    // Updated prompt
     println("\n[Start] Enter 'file <path>', 'text', 'download <url>', or 'exit':")
   }
 
@@ -22,7 +21,6 @@ class InitialState extends TuiState {
         controller.loadFromFile(path)
         tui.changeState(new FilterState)
         
-      // NEW: Download Handler
       case "download" :: url :: Nil =>
         println(s"Downloading from $url ...")
         controller.downloadFromUrl(url)
@@ -50,7 +48,7 @@ class FilterState extends TuiState {
     println("\n[Filter] Enter word to filter, 'undo', 'redo', 'numbers', 'lower', 'reset', or 'exit':")
   }
 
-override def handleInput(input: String, tui: Tui, controller: Controller): Unit = {
+  override def handleInput(input: String, tui: Tui, controller: Controller): Unit = {
     input.toLowerCase match {
       case "undo" => controller.undo()
       case "redo" => controller.redo()

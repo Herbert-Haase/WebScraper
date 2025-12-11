@@ -3,7 +3,7 @@ package de.htwg.webscraper.aview
 import de.htwg.webscraper.controller.{Controller, Observer}
 import scalafx.application.Platform
 import scalafx.scene.Scene
-import scalafx.scene.layout.{BorderPane, VBox, HBox, Priority}
+import scalafx.scene.layout.{BorderPane, VBox, HBox, Priority, Region} 
 import scalafx.scene.control.{TextArea, TextField, Button, Label, ToolBar, Separator}
 import scalafx.scene.web.WebView
 import scalafx.stage.FileChooser
@@ -14,7 +14,6 @@ import scala.compiletime.uninitialized
 class Gui(controller: Controller) extends Observer {
   controller.add(this)
 
-  // Keep reference to the stage for file chooser
   private var parentStage: scalafx.stage.Window = uninitialized
 
   // -- Components --
@@ -26,12 +25,12 @@ class Gui(controller: Controller) extends Observer {
   
   private val pathField = new TextField { hgrow = Priority.Always; promptText = "File path..." }
   private val filterField = new TextField { 
-    promptText = "Filter word..."; prefWidth = 150
+    promptText = "Filter word..."; //prefWidth = 150
     onAction = _ => controller.filter(text.value)
   }
   private val statusLabel = new Label("Welcome to WebScraper")
   private val urlField = new TextField { 
-    promptText = "http://..."; prefWidth = 200
+    promptText = "http://..."; //prefWidth = 200
     onAction = _ => {
       val url = text.value
       if (url.nonEmpty) controller.downloadFromUrl(url)
@@ -41,10 +40,9 @@ class Gui(controller: Controller) extends Observer {
   // -- Layout Definitions --
   
   private val mainToolbar = new ToolBar {
-    content = List(
+      val spacer = new Region { hgrow = Priority.Always }
+      content = List(
       new Button("📂 Open") { onAction = _ => openFileChooser() },
-      new Separator,
-      // new Label("URL:"),
       urlField,
       new Button("⬇ Download") { 
         onAction = _ => {
@@ -56,10 +54,12 @@ class Gui(controller: Controller) extends Observer {
       new Button("↶ Undo") { onAction = _ => controller.undo() },
       new Button("↷ Redo") { onAction = _ => controller.redo() },
       new Separator,
-      // new Label("Filter: "),
       filterField,
       new Button("Apply") { onAction = _ => controller.filter(filterField.text.value) },
-      new Button("✖ Reset") { 
+
+      new Separator,
+      spacer,
+      new Button("Reset") { 
         style = "-fx-background-color: #cdb91dff;" 
         onAction = _ => {
           controller.reset()
@@ -68,12 +68,11 @@ class Gui(controller: Controller) extends Observer {
         }
       },
 
-      new Separator,
       new Button("✖") { 
         style = "-fx-background-color: #8b0000;" 
         onAction = _ => Platform.exit()
       }
-    )
+      )
   }
 
   private val statusBar = new HBox {
@@ -92,7 +91,6 @@ class Gui(controller: Controller) extends Observer {
   def createScene(): Scene = {
     val myScene = new Scene {
       root = mainLayout
-      // Store reference to window for file chooser
       window.onChange { (_, _, newWindow) =>
         if (newWindow != null) parentStage = newWindow
       }

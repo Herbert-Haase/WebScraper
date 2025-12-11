@@ -59,24 +59,12 @@ class Tui(controller: Controller) extends Observer {
   }
 
   override def update(isFilterUpdate: Boolean): Unit = {
-
-    // Auto-transition to FilterState if data is loaded from GUI
-
     if (state.isInstanceOf[InitialState] && controller.data.originalLines.nonEmpty) {
-
       changeState(new FilterState)
-
     }
-
-    
-
     println(renderer.render(controller.data, 60))
-
     if (isFilterUpdate) {
-
       println(s">> Filter active. Matches: ${controller.data.displayLines.size}")
-
     }
-
   }
 }

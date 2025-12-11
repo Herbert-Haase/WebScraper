@@ -12,14 +12,12 @@ object Main extends JFXApp3 {
     val tui = new Tui(controller)
     val gui = new Gui(controller)
 
-    // Run TUI in background thread
     val tuiThread = new Thread(() => {
       tui.run()
     })
-    tuiThread.setDaemon(true) // Ensures TUI dies when GUI closes
+    tuiThread.setDaemon(true)
     tuiThread.start()
 
-    // Initialize the GUI with the primary stage from JFXApp3
     stage = new PrimaryStage {
       title = "WebScraper Pro"
       width = 1100
