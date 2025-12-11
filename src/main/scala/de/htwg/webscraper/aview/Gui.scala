@@ -9,6 +9,8 @@ import scalafx.scene.web.WebView
 import scalafx.stage.FileChooser
 import scalafx.geometry.Insets
 import scalafx.Includes._
+import javafx.beans.value.{ChangeListener, ObservableValue}
+import javafx.concurrent.Worker
 import scala.compiletime.uninitialized
 
 class Gui(controller: Controller) extends Observer {
@@ -25,17 +27,38 @@ class Gui(controller: Controller) extends Observer {
   
   private val pathField = new TextField { hgrow = Priority.Always; promptText = "File path..." }
   private val filterField = new TextField { 
-    promptText = "Filter word..."; //prefWidth = 150
+    promptText = "Filter word..."; 
     onAction = _ => controller.filter(text.value)
   }
   private val statusLabel = new Label("Welcome to WebScraper")
   private val urlField = new TextField { 
-    promptText = "http://..."; //prefWidth = 200
+    promptText = "http://..."; 
     onAction = _ => {
       val url = text.value
       if (url.nonEmpty) controller.downloadFromUrl(url)
     }
   }
+
+  // -- Web Engine Configuration for Navigation --
+  webView.engine.getLoadWorker.stateProperty.addListener(new ChangeListener[Worker.State] {
+    override def changed(observable: ObservableValue[_ <: Worker.State], oldValue: Worker.State, newValue: Worker.State): Unit = {
+      if (newValue == Worker.State.SUCCEEDED) {
+      }
+    }
+  })
+
+  // This listener intercepts link clicks in the WebView
+  webView.engine.locationProperty.addListener(new ChangeListener[String] {
+    override def changed(observable: ObservableValue[_ <: String], oldValue: String, newValue: String): Unit = {
+      if (newValue != null && newValue.nonEmpty) {
+        urlField.text = newValue
+        
+        Platform.runLater {
+          controller.downloadFromUrl(newValue)
+        }
+      }
+    }
+  })
 
   // -- Layout Definitions --
   

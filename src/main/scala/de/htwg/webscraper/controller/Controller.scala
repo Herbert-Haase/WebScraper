@@ -36,13 +36,13 @@ class Controller extends Observable with Originator {
     override def redo(): Unit = execute()
   }
 
-  // --- NEW: Download Command ---
+  // --- Download Command ---
   class DownloadCommand(url: String) extends Command {
     var memento: Memento = uninitialized
 
     override def execute(): Unit = {
       memento = createMemento()
-      // Perform GET request
+      // GET request
       val result = Using(Source.fromURL(url))(_.getLines().toList)
       
       result match {
@@ -73,8 +73,6 @@ class Controller extends Observable with Originator {
   // --- API ---
   def loadFromFile(path: String): Unit = undoManager.doStep(new LoadCommand(Some(path), None))
   def loadFromText(text: String): Unit = undoManager.doStep(new LoadCommand(None, Some(text)))
-  
-  // New API Method
   def downloadFromUrl(url: String): Unit = undoManager.doStep(new DownloadCommand(url))
   
   def filter(word: String): Unit = undoManager.doStep(new FilterCommand(word))
