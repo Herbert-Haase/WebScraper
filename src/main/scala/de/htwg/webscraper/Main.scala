@@ -1,9 +1,8 @@
 package de.htwg.webscraper
 
-import de.htwg.webscraper.controller.impl1.controller.*
-import de.htwg.webscraper.controller.exporter.impl1.jsonExporter.*
-import de.htwg.webscraper.model.analyzer.impl1.simpleAnalyzer.*
-import de.htwg.webscraper.model.webClient.impl1.simpleWebClient.*
+import com.google.inject.Guice
+import de.htwg.webscraper.controller.ControllerInterface
+import de.htwg.webscraper.controller.exporter.Exporter
 import de.htwg.webscraper.aview.{Tui, Gui}
 import scalafx.application.JFXApp3
 import scalafx.application.JFXApp3.PrimaryStage
@@ -11,14 +10,13 @@ import scalafx.application.JFXApp3.PrimaryStage
 object Main extends JFXApp3 {
   override def start(): Unit = {
 
-    val client = new SimpleWebClient()
-    val analyzer = new SimpleAnalyzer()
+    val injector = Guice.createInjector(new WebScraperModule)
 
-    val controller = new Controller(analyzer, client)
-    val jsonExporter = new JsonExporter()
+    val controller = injector.getInstance(classOf[ControllerInterface])
+    val exporter = injector.getInstance(classOf[Exporter])
 
-    val tui = new Tui(controller, jsonExporter)
-    val gui = new Gui(controller, jsonExporter)
+    val tui = new Tui(controller, exporter)
+    val gui = new Gui(controller, exporter)
 
     val tuiThread = new Thread(() => {
       tui.run()

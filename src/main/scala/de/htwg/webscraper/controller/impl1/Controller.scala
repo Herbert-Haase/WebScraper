@@ -1,5 +1,7 @@
 package de.htwg.webscraper.controller.impl1.controller
 
+import com.google.inject.Inject
+import de.htwg.webscraper.model.data.ProjectData
 import de.htwg.webscraper.model.webClient.WebClient
 import de.htwg.webscraper.model.analyzer.Analyzer
 import de.htwg.webscraper.util.{Command, Memento, Originator, UndoManager}
@@ -13,9 +15,10 @@ import scala.compiletime.uninitialized
 import de.htwg.webscraper.model.analyzer.Analyzer
 import de.htwg.webscraper.model.webClient.WebClient
 
-class Controller(
+
+class Controller @Inject() (
     val analyzer: Analyzer,
-    val client: WebClient,
+    val client: WebClient
 ) extends ControllerInterface with Originator {
 
   private var dataState: ProjectData = analyzer.process(List.empty)
