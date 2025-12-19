@@ -15,15 +15,14 @@ lazy val root = project
       "org.openjfx" % "javafx-graphics" % "21.0.2" classifier "linux",
       "org.openjfx" % "javafx-base" % "21.0.2" classifier "linux",
       "org.openjfx" % "javafx-media" % "21.0.2" classifier "linux",
-      "org.openjfx" % "javafx-web" % "21.0.2" classifier "linux"
+      "org.openjfx" % "javafx-web" % "21.0.2" classifier "linux",
+      "com.google.inject" % "guice" % "7.0.0"
     ),
 
     coverageExcludedFiles := ".*Main\\.scala",
 
     fork := true,
-    
-    // CRITICAL FIX: Connects your terminal input to the forked process
-    // This allows the TUI to read input instead of closing immediately.
+
     connectInput in run := true,
 
     // Suppress JavaFX warnings
