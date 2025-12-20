@@ -22,8 +22,6 @@ lazy val root = project
 
     fork := true,
     
-    // CRITICAL FIX: Connects your terminal input to the forked process
-    // This allows the TUI to read input instead of closing immediately.
     connectInput in run := true,
 
     // Suppress JavaFX warnings
