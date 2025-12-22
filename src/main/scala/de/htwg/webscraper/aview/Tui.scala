@@ -1,12 +1,12 @@
 package de.htwg.webscraper.aview
 
 import _root_.de.htwg.webscraper.controller.ControllerInterface
-import de.htwg.webscraper.controller.exporter.Exporter
+import de.htwg.webscraper.model.fileio.FileIO
 import _root_.de.htwg.webscraper.util.Observer
 import scala.io.StdIn.readLine
 
 
-class Tui(controller: ControllerInterface, val exporter: Exporter) extends Observer {
+class Tui(controller: ControllerInterface, val fileIO: FileIO) extends Observer {
   controller.add(this)
 
   private val famousLibs = Set(
@@ -41,7 +41,7 @@ class Tui(controller: ControllerInterface, val exporter: Exporter) extends Obser
     state.displayPrompt()
     Option(readLine()) match {
       case Some(input) =>
-        state.handleInput(input, this, controller, exporter)
+        state.handleInput(input, this, controller, fileIO)
         inputLoop()
       case None =>
         println("\nExiting.")
@@ -64,9 +64,10 @@ class Tui(controller: ControllerInterface, val exporter: Exporter) extends Obser
 
     override def update(isFilterUpdate: Boolean): Unit = {
     val d = controller.data
-    println("-" * 60)
+    // println("-" * 60)
+    println(renderer.render(controller.data, 60))
     println(s"[Metrics]")
-    println(s" Chars: ${d.characterCount} | Words: ${d.wordCount} | Lines: ${d.lineCount}")
+    // println(s" Chars: ${d.characterCount} | Words: ${d.wordCount} | Lines: ${d.lineCount}")
     println(s" Images: ${d.imageCount} | Links: ${d.linkCount}")
     
     println(s" Complexity: ${renderComplexityBar(d.complexity)}")
@@ -75,7 +76,6 @@ class Tui(controller: ControllerInterface, val exporter: Exporter) extends Obser
     println(s" Famous Libs: ${if (visibleLibs.isEmpty) "None detected" else visibleLibs.mkString(", ")}")
     
     println("-" * 60)
-    println(renderer.render(controller.data, 60))
     if (isFilterUpdate) {
       println(s">> Filter active. Matches: ${controller.data.displayLines.size}")
     }

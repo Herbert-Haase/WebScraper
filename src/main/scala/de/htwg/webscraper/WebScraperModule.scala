@@ -3,9 +3,9 @@ package de.htwg.webscraper
 import com.google.inject.AbstractModule
 import de.htwg.webscraper.controller.ControllerInterface
 import de.htwg.webscraper.controller.impl1.controller.Controller
-import de.htwg.webscraper.controller.exporter.Exporter
-// import de.htwg.webscraper.controller.exporter.impl1.jsonExporter.JsonExporter
-import de.htwg.webscraper.controller.exporter.impl2.XmlExporter
+import de.htwg.webscraper.model.fileio.FileIO
+// import de.htwg.webscraper.model.fileio.impl.XmlFileIO 
+import de.htwg.webscraper.model.fileio.impl.JsonFileIO
 import de.htwg.webscraper.model.analyzer.Analyzer
 import de.htwg.webscraper.model.analyzer.impl1.simpleAnalyzer.SimpleAnalyzer
 import de.htwg.webscraper.model.webClient.WebClient
@@ -18,7 +18,7 @@ class WebScraperModule extends AbstractModule {
 
     bind(classOf[ControllerInterface]).to(classOf[Controller])
 
-    // bind(classOf[Exporter]).to(classOf[JsonExporter])
-    bind(classOf[Exporter]).to(classOf[XmlExporter])
+    bind(classOf[FileIO]).to(classOf[JsonFileIO])
+    // bind(classOf[FileIO]).to(classOf[XmlFileIO])
   }
 }

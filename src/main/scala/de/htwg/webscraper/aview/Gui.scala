@@ -1,198 +1,172 @@
 package de.htwg.webscraper.aview
 
 import de.htwg.webscraper.controller.ControllerInterface
-import de.htwg.webscraper.controller.exporter.Exporter
 import de.htwg.webscraper.util.Observer
 import scalafx.scene.Scene
 import scalafx.application.Platform
 import scalafx.scene.layout.{BorderPane, VBox, HBox, Priority, Region}
-import scalafx.scene.control.{TextArea, TextField, Button, Label, ToolBar, Separator, ProgressBar}
+import scalafx.scene.control.{TextArea, TextField, Button, Label, ToolBar, Separator, ProgressBar, Tooltip}
 import scalafx.scene.web.WebView
 import scalafx.stage.FileChooser
-import javafx.beans.value.{ChangeListener, ObservableValue}
 import scalafx.geometry.Insets
 import scalafx.Includes._
 import javafx.concurrent.Worker
 import scala.compiletime.uninitialized
 
-class Gui(controller: ControllerInterface, exporter: Exporter) extends Observer {
+// Note: Exporter is removed from constructor, we use Controller now
+class Gui(controller: ControllerInterface) extends Observer {
   controller.add(this)
 
   // Filter for display logic
-  private val famousLibs = Set("react", "angular", "vue", "svelte", "jquery", "bootstrap", "tailwind", "stacks", "pydata")
-
+  private val famousLibs = Set("react", "angular", "vue", "svelte", "jquery", "bootstrap", "tailwind")
   private var parentStage: scalafx.stage.Window = uninitialized
 
   // -- UI Components --
   private val webView = new WebView()
-  private val textArea = new TextArea {
-    editable = false
-    styleClass += "code-area"
-  }
-  val spacer = new Region { hgrow = Priority.Always }
-
+  private val textArea = new TextArea { editable = false; styleClass += "code-area" }
   private val urlField = new TextField {
-    promptText = "Enter URL (e.g., https://google.com)"
+    promptText = "http://..."
     hgrow = Priority.Always
-    onAction = _ => controller.downloadFromUrl(text.value)
+    onAction = _ => if (text.value.nonEmpty) controller.downloadFromUrl(text.value)
   }
-
-  private val statusLabel = new Label("Ready")
   
+  private val statusLabel = new Label("Welcome to WebScraper")
   private val complexityLabel = new Label("Complexity: 0")
-  private val complexityBar = new ProgressBar() { 
-    prefWidth = 150
-    style = "-fx-accent: green;" 
-  }
+  private val complexityBar = new ProgressBar() { prefWidth = 150 }
+  
+  // Improved Label with Tooltip support for long lists
   private val famousLibLabel = new Label("Libraries: None") {
-  maxWidth = 600
-  wrapText = false
-  style = "-fx-text-overrun: ellipsis;"
+    maxWidth = 400
+    styleClass += "dashboard-text"
   }
   private val detailStatsLabel = new Label("Images: 0 | Links: 0")
 
-  private val mainLayout = new BorderPane {
-    top = new VBox(0) {
-      children = Seq(
-        new ToolBar {
-          items = Seq(
-            new Button("Open File") { onAction = _ => openFileChooser() },
-            new Separator(),
-            new Label("URL:"),
-            urlField,
-            new Button("Download") { onAction = _ => controller.downloadFromUrl(urlField.text.value) },
-            new Separator(),
-            new Button("Export") { onAction = _ => exportData() },
-            new Separator(),
-            new Button("Undo") { onAction = _ => controller.undo() },
-            new Button("Redo") { onAction = _ => controller.redo() },
-            spacer,
-            new Button("Reset") {
-              style = "-fx-background-color: #cdb91dff; -fx-text-fill: white;"
-              onAction = _ => {
-                controller.reset()
-                urlField.text = ""
-              }
-            },
-            new Button("✖") {
-              style = "-fx-background-color: #8b0000; -fx-text-fill: white;"
-              onAction = _ => Platform.exit()
-            }
-          )
-        },
-        // Dashboard Header
-        new HBox(20) {
-          padding = Insets(10)
-          styleClass += "dashboard-bar"
-          children = Seq(
-            new VBox(2) { 
-              children = Seq(
-                new Label("Complexity") { styleClass += "dashboard-label-header" }, 
-                complexityBar, 
-                complexityLabel
-              ) 
-            },
-            new Separator { orientation = scalafx.geometry.Orientation.Vertical },
-            new VBox(2) { 
-              children = Seq(
-                new Label("Web Anatomy") { styleClass += "dashboard-label-header" }, 
-                detailStatsLabel, 
-                famousLibLabel
-              ) 
-            }
-          )
-        }
-      )
-    }
-    center = textArea
-    bottom = new HBox {
-    padding = Insets(5)
-    children = Seq(statusLabel)
-    styleClass += "status-bar"
-}
+  // -- Toolbar --
+  private val mainToolbar = new ToolBar {
+    content = List(
+      // Smart Open: Handles Text files AND XML/JSON Sessions
+      new Button("📂 Open/Import") { onAction = _ => openFileChooser() },
+      
+      new Separator,
+      urlField,
+      new Button("⬇ Download") { onAction = _ => if (urlField.text.value.nonEmpty) controller.downloadFromUrl(urlField.text.value) },
+      
+      new Separator,
+      new Button("↶") { onAction = _ => controller.undo(); tooltip = new Tooltip("Undo") },
+      new Button("↷") { onAction = _ => controller.redo(); tooltip = new Tooltip("Redo") },
+      
+      new Separator,
+      // Export Session
+      new Button("💾 Export Session") { 
+        onAction = _ => exportSession() 
+        tooltip = new Tooltip("Save cumulative history to XML/JSON")
+      },
+      
+      new Region { hgrow = Priority.Always }, // Spacer
+      
+      new Button("Reset") {
+        style = "-fx-background-color: #cdb91dff; -fx-text-fill: white;"
+        onAction = _ => { controller.reset(); urlField.text = "" }
+      },
+      new Button("✖") {
+        style = "-fx-background-color: #8b0000; -fx-text-fill: white;"
+        onAction = _ => Platform.exit()
+      }
+    )
   }
-  // -- Web Engine Configuration for Navigation --
-  webView.engine.getLoadWorker.stateProperty.addListener(new ChangeListener[Worker.State] {
-    override def changed(observable: ObservableValue[? <: Worker.State], oldValue: Worker.State, newValue: Worker.State): Unit = {
-      if (newValue == Worker.State.SUCCEEDED) {
-      }
-    }
-  })
 
-  // This listener intercepts link clicks in the WebView
-  webView.engine.locationProperty.addListener(new ChangeListener[String] {
-    override def changed(observable: ObservableValue[? <: String], oldValue: String, newValue: String): Unit = {
-      if (newValue != null && newValue.nonEmpty) {
-        urlField.text = newValue
+  // ... (statsBar and mainLayout remain same as previous, ensure Dark Mode styles) ...
+  private val statsBar = new HBox(20) {
+    padding = Insets(10)
+    styleClass += "dashboard-bar"
+    children = Seq(
+      new VBox(2) { children = Seq(new Label("Health & Complexity") { styleClass += "dashboard-label-header" }, complexityBar, complexityLabel) },
+      new Separator { orientation = scalafx.geometry.Orientation.Vertical },
+      new VBox(2) { children = Seq(new Label("Web Anatomy") { styleClass += "dashboard-label-header" }, detailStatsLabel, famousLibLabel) }
+    )
+  }
 
-        Platform.runLater {
-          controller.downloadFromUrl(newValue)
-        }
-      }
-    }
-  })
+  private val mainLayout = new BorderPane {
+    top = new VBox(mainToolbar, statsBar)
+    center = textArea
+    bottom = new HBox { padding = Insets(5); styleClass += "status-bar"; children = Seq(statusLabel) }
+  }
 
   def createScene(): Scene = {
     val myScene = new Scene {
       root = mainLayout
       window.onChange { (_, _, newWindow) => if (newWindow != null) parentStage = newWindow }
-      
-      onKeyPressed = (event) => {
-        if (event.controlDown) {
-          event.code.name match {
-            case "Z" => 
-              controller.undo()
-              event.consume()
-            case "Y" => 
-              controller.redo()
-              event.consume()
-            case _ =>
-          }
-        }
-      }
     }
-    
     val cssUrl = getClass.getResource("/style.css")
     if (cssUrl != null) myScene.stylesheets.add(cssUrl.toExternalForm)
     update(false)
     myScene
   }
 
-  private def exportData(): Unit = {
-    val fileChooser = new FileChooser()
-    val file = fileChooser.showSaveDialog(parentStage)
-    if (file != null) exporter.exportData(controller.data, file.getAbsolutePath)
-  }
-
+  // --- File Operations ---
+  
   private def openFileChooser(): Unit = {
     val fileChooser = new FileChooser()
+    fileChooser.title = "Open File or Import Session"
+    // Allow selecting Text, XML or JSON
+    fileChooser.extensionFilters.addAll(
+    new FileChooser.ExtensionFilter("All Supported", Seq("*.txt", "*.xml", "*.json")),
+    new FileChooser.ExtensionFilter("WebScraper Session", Seq("*.xml", "*.json")),
+    new FileChooser.ExtensionFilter("Text Files", "*.txt")
+    )
     val selectedFile = fileChooser.showOpenDialog(parentStage)
-    if (selectedFile != null) controller.loadFromFile(selectedFile.getAbsolutePath)
+    if (selectedFile != null) {
+      controller.loadFromFile(selectedFile.getAbsolutePath)
+    }
   }
 
+  private def exportSession(): Unit = {
+    val fileChooser = new FileChooser()
+    fileChooser.title = "Export Session History"
+    fileChooser.extensionFilters.addAll(
+      new FileChooser.ExtensionFilter("XML Data", "*.xml"),
+      new FileChooser.ExtensionFilter("JSON Data", "*.json")
+    )
+    val file = fileChooser.showSaveDialog(parentStage)
+    if (file != null) {
+      controller.saveSession(file.getAbsolutePath)
+    }
+  }
+
+  // --- Update Logic ---
   override def update(isFilterUpdate: Boolean): Unit = {
     Platform.runLater {
       val d = controller.data
       val content = d.displayLines.mkString("\n")
-      
-      val stats = s"Chars: ${d.characterCount} | Words: ${d.wordCount} | Lines: ${d.lineCount}"
+
+      // Status Bar
+      val stats = s"Source: ${d.source} | Chars: ${d.characterCount} | Words: ${d.wordCount}"
       statusLabel.text = if(isFilterUpdate) s" [FILTER ACTIVE] $stats" else s" [READY] $stats"
 
-      // Normalize score: 0-100 map to 0.0-1.0
+      // Complexity Bar
       val progress = Math.min(d.complexity / 100.0, 1.0)
       complexityBar.progress = progress
       val color = if (d.complexity < 20) "green" else if (d.complexity < 60) "orange" else "red"
       complexityBar.style = s"-fx-accent: $color;"
       complexityLabel.text = s"Score: ${d.complexity}"
 
-      detailStatsLabel.text = s"Images: ${d.images.length} | Links: ${d.links.length}"
+      // Anatomy & Libs
+      detailStatsLabel.text = s"Images: ${d.imageCount} | Links: ${d.linkCount}"
       
-      val visibleLibs = d.libraries.filter(l => famousLibs.exists(fl => l.toLowerCase.contains(fl))).distinct.take(6)
-      val libSuffix = if (d.libraries.count(l => famousLibs.exists(fl => l.toLowerCase.contains(fl))) > 6) "..." else ""
-      famousLibLabel.text = "Famous Libs: " + (if (visibleLibs.isEmpty) "None" else visibleLibs.mkString(", ") + libSuffix)
+      // Clean display of libraries
+      val visibleLibs = d.libraries
+        .filter(l => famousLibs.exists(fl => l.toLowerCase.contains(fl)))
+        .take(8) // Limit to 8 to prevent UI break
+        
+      famousLibLabel.text = "Famous Libs: " + (if (visibleLibs.isEmpty) "None" else visibleLibs.mkString(", "))
+      if (d.libraries.nonEmpty) {
+         famousLibLabel.tooltip = new Tooltip(d.libraries.mkString("\n"))
+      }
 
+      // Content View
       if (isHtml(content)) {
-        webView.engine.loadContent(content)
+        if (d.source.startsWith("http")) webView.engine.loadContent(content) // simplified
+        else webView.engine.loadContent(content)
         if (mainLayout.center.value != webView) mainLayout.center = webView
       } else {
         textArea.text = content
@@ -202,7 +176,7 @@ class Gui(controller: ControllerInterface, exporter: Exporter) extends Observer 
   }
 
   private def isHtml(content: String): Boolean = {
-    val lower = content.toLowerCase.trim
-    lower.startsWith("<!doctype html") || lower.startsWith("<html") || lower.startsWith("<!--")
+    val c = content.trim.toLowerCase
+    c.startsWith("<!doctype html") || c.startsWith("<html") || c.startsWith("<!--")
   }
 }

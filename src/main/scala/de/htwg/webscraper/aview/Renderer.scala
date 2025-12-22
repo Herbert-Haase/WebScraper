@@ -24,7 +24,7 @@ abstract class ReportTemplate extends Renderer {
 
   protected def buildStats(data: ProjectData): String = {
     val commonWords = data.mostCommonWords.map { case (w, c) => s"'$w'($c)" }.mkString(", ")
-    s"\n[Stats] Chars: ${data.characterCount} | Words: ${data.wordCount}\n[Top Words] $commonWords\n"
+    s"\n[Stats] Chars: ${data.characterCount} | Words: ${data.wordCount} | Lines: ${data.lineCount}\n[Top Words] $commonWords\n"
   }
 }
 

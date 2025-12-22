@@ -4,11 +4,10 @@ import _root_.de.htwg.webscraper.controller.ControllerInterface
 import scala.io.StdIn.readLine
 import scala.collection.mutable.ListBuffer
 import scala.util.{Success, Failure}
-import de.htwg.webscraper.controller.exporter.Exporter
-import de.htwg.webscraper.controller.exporter.Exporter
+import de.htwg.webscraper.model.fileio.FileIO
 
 trait TuiState {
-  def handleInput(input: String, tui: Tui, controller: ControllerInterface, exporter: Exporter): Unit
+  def handleInput(input: String, tui: Tui, controller: ControllerInterface, fileIO: FileIO): Unit
   def displayPrompt(): Unit
 }
 
@@ -17,7 +16,7 @@ class InitialState extends TuiState {
     println("\n[Start] Enter 'file <path>', 'text', 'download <url>', or 'exit':")
   }
 
-  override def handleInput(input: String, tui: Tui, controller: ControllerInterface, exporter: Exporter): Unit = {
+  override def handleInput(input: String, tui: Tui, controller: ControllerInterface, fileIO: FileIO): Unit = {
     input.split(" ").toList match {
       case "file" :: path :: Nil =>
         controller.loadFromFile(path)
@@ -29,10 +28,8 @@ class InitialState extends TuiState {
         tui.changeState(new FilterState)
 
       case "export" :: path :: Nil =>
-        exporter.exportData(controller.data, path).fold(
-          e => println(s"Error: ${e.getMessage}"),
-          msg => println(msg)
-        )
+        controller.saveSession(path)
+        println(s"Session saved to $path")
 
       case "text" :: Nil =>
         println("Enter text. Type '.' on a new line to finish:")
@@ -56,7 +53,7 @@ class FilterState extends TuiState {
     println("\n[Filter] Enter word to filter, 'export <path>', 'undo', 'redo', 'reset', or 'exit':")
   }
 
-  override def handleInput(input: String, tui: Tui, controller: ControllerInterface, exporter: Exporter): Unit = {
+  override def handleInput(input: String, tui: Tui, controller: ControllerInterface, FileIO: FileIO): Unit = {
     val parts = input.split(" ").toList
 
     parts match {
@@ -68,12 +65,15 @@ class FilterState extends TuiState {
         controller.reset()
         tui.changeState(new InitialState)
       case "exit" :: Nil => System.exit(0)
+      case "save" :: Nil => 
+        println("Enter filename:")
+        val path = readLine()
+        controller.saveSession(path)
+      case "load" :: Nil =>
+        println("Enter filename:")
+        val path = readLine()
+        controller.loadFromFile(path)
 
-      case "export" :: path :: Nil =>
-        exporter.exportData(controller.data, path).fold(
-          e => println(s"Error: ${e.getMessage}"),
-          msg => println(msg)
-        )
 
       case _ =>
         if (parts.length == 1 && parts.head.nonEmpty) {

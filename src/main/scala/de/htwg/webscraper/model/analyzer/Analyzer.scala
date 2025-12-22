@@ -7,6 +7,6 @@ import scala.util.{Try, Success, Failure}
 
 
 trait Analyzer {
-  def process(original: List[String], filtered: List[String] = Nil): ProjectData
+  def process(original: List[String], filtered: List[String], source: String): ProjectData
 }
 
