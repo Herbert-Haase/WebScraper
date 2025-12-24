@@ -4,12 +4,14 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Herbert-Haase_WebReport&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Herbert-Haase_WebReport)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Herbert-Haase_WebReport&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Herbert-Haase_WebReport)
 
+```text
 ██╗    ██╗███████╗██████╗ ██████╗ ███████╗██████╗  ██████╗ ██████╗ ████████╗
 ██║    ██║██╔════╝██╔══██╗██╔══██╗██╔════╝██╔══██╗██╔═══██╗██╔══██╗╚══██╔══╝
 ██║ █╗ ██║█████╗  ██████╔╝██████╔╝█████╗  ██████╔╝██║   ██║██████╔╝   ██║   
 ██║███╗██║██╔══╝  ██╔══██╗██╔══██╗██╔══╝  ██╔═══╝ ██║   ██║██╔══██╗   ██║   
 ╚███╔███╔╝███████╗██████╔╝██║  ██║███████╗██║     ╚██████╔╝██║  ██║   ██║   
  ╚══╝╚══╝ ╚══════╝╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝      ╚═════╝ ╚═╝  ╚═╝   ╚═╝
+```
 
 
 # WebReport
