@@ -11,16 +11,63 @@ trait Renderer {
 abstract class ReportTemplate extends Renderer {
 
   final override def render(data: DataTrait, width: Int): String = {
-    val b = new StringBuilder()
     val effectiveWidth = if (width > 20) width else 80
     
-    b.append(buildHeader(effectiveWidth))
-    b.append(buildBody(data, effectiveWidth))
-    b.append(buildFooter(effectiveWidth))
-
-    if (data.source != "empty") {
+    // If empty, return ONLY the welcome screen
+    if (data.source == "empty") {
+      renderWelcome(effectiveWidth)
+    } else {
+      // Standard report structure for actual data
+      val b = new StringBuilder()
+      b.append(buildHeader(effectiveWidth))
+      b.append(buildBody(data, effectiveWidth))
+      b.append(buildFooter(effectiveWidth))
       b.append(buildDashboard(data, effectiveWidth))
+      b.toString()
     }
+  }
+
+  protected def renderWelcome(width: Int): String = {
+    val b = new StringBuilder()
+    val contentWidth = width - 4
+    val logo = """
+  ██╗    ██╗███████╗██████╗ ██████╗ ███████╗██████╗  ██████╗ ██████╗ ████████╗
+  ██║    ██║██╔════╝██╔══██╗██╔══██╗██╔════╝██╔══██╗██╔═══██╗██╔══██╗╚══██╔══╝
+  ██║ █╗ ██║█████╗  ██████╔╝██████╔╝█████╗  ██████╔╝██║   ██║██████╔╝   ██║   
+  ██║███╗██║██╔══╝  ██╔══██╗██╔══██╗██╔══╝  ██╔═══╝ ██║   ██║██╔══██╗   ██║   
+  ╚███╔███╔╝███████╗██████╔╝██║  ██║███████╗██║     ╚██████╔╝██║  ██║   ██║   
+╚══╝╚══╝ ╚══════╝╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝      ╚═════╝ ╚═╝  ╚═╝   ╚═╝"""
+
+    // 1. Render Logo (Above the box, no top border)
+    logo.split("\n").filter(_.trim.nonEmpty).foreach { line =>
+      val padding = Math.max(0, (width - line.length) / 2)
+      b.append(" " * padding + line + "\n")
+    }
+    
+    b.append("\n") // Spacer
+    
+    // 2. Start Box
+    b.append(buildHeader(width))
+
+    // 3. Messages
+    val msg = List(
+      "Type 'download <url>' to fetch a website,",
+      "'text' and then put in text,",
+      "or 'load <path>' to open a file.",
+      "",
+      s"${Console.YELLOW}Use the GUI for mouse interactions.${Console.RESET}"
+    )
+
+    msg.foreach { text =>
+      val rawLen = text.replaceAll("\u001B\\[[;\\d]*m", "").length
+      val padding = Math.max(0, (contentWidth - rawLen) / 2)
+      val rightPadding = Math.max(0, contentWidth - rawLen - padding)
+      b.append(s"│ ${" " * padding}$text${" " * rightPadding} │\n")
+    }
+
+    // 4. End Box (The only bottom)
+    b.append(buildFooter(width))
+    
     b.toString()
   }
 
@@ -83,26 +130,6 @@ class SimpleReport extends ReportTemplate {
     }.mkString
   }
 
-  private def renderWelcome(width: Int): String = {
-    val contentWidth = width - 4
-    val msg = List(
-      "",
-      s"${Console.BOLD}${Console.CYAN}Welcome to WebScraper${Console.RESET}",
-      "",
-      "Type 'download <url>' to fetch a website,",
-      "or 'load <path>' to open a file.",
-      "",
-      s"${Console.YELLOW}Use the GUI for mouse interactions.${Console.RESET}",
-      ""
-    )
-    
-    msg.map { text =>
-      val rawLen = text.replaceAll("\u001B\\[[;\\d]*m", "").length // calculate length without colors
-      val padding = (contentWidth - rawLen) / 2
-      val line = " " * padding + text + " " * (contentWidth - padding - rawLen)
-      s"│ $line │\n"
-    }.mkString
-  }
 
   private def colorizeHtml(text: String): String = {
     val tagColor = Console.YELLOW

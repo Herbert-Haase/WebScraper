@@ -37,7 +37,7 @@ class RendererSpec extends AnyWordSpec with Matchers {
       val renderer = new SimpleReport()
       val output = renderer.render(emptyData, width)
 
-      output should include("Welcome to WebScraper")
+      output should include("text")
       output should include("Use the GUI")
       output should not include("DASHBOARD")
     }
