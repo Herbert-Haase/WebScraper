@@ -10,7 +10,7 @@ import scalafx.application.JFXApp3.PrimaryStage
 object Main extends JFXApp3 {
   override def start(): Unit = {
 
-    val injector = Guice.createInjector(new WebScraperModule)
+    val injector = Guice.createInjector(new WebReportModule)
 
     val sessionManager = injector.getInstance(classOf[SessionManagerTrait])
     val fileIO = injector.getInstance(classOf[FileIOTrait])
@@ -25,7 +25,7 @@ object Main extends JFXApp3 {
     tuiThread.start()
 
     stage = new PrimaryStage {
-      title = "WebScraper Pro"
+      title = "WebReport"
       width = 1100
       height = 800
       scene = gui.createScene()

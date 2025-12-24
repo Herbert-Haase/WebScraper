@@ -14,7 +14,7 @@ trait TuiState {
 class InitialState extends TuiState {
   override def displayPrompt(): Unit = {
     val help = s"${Console.WHITE}(download <url> | load <path> | text | exit)${Console.RESET}"
-    val prompt = s"${Console.CYAN}${Console.BOLD} scraper>${Console.RESET} "
+    val prompt = s"${Console.CYAN}${Console.BOLD} >${Console.RESET} "
     
     println(s"\n$help")
     print(prompt)
@@ -63,6 +63,7 @@ class InitialState extends TuiState {
 class FilterState extends TuiState {
   override def displayPrompt(): Unit = {
     println("\n[Filter] Enter word to filter, 'export <path>', 'ln', 'undo', 'redo', 'reset', or 'exit':")
+    printf(s"${Console.CYAN}${Console.BOLD} >${Console.RESET} ")
   }
 
   override def handleInput(input: String, tui: Tui, sessionManager: SessionManagerTrait, fileIO: FileIOTrait): Unit = {

@@ -38,7 +38,7 @@ class Gui(sessionManager: SessionManagerTrait) extends Observer {
     style = "-fx-text-fill: #808080; -fx-padding: 0 0 0 10;"
   }
   
-  private lazy val statusLabel = new Label("Welcome to WebScraper")
+  private lazy val statusLabel = new Label("Welcome to WebReport")
   private lazy val complexityLabel = new Label("Complexity: 0")
   private lazy val complexityBar = new ProgressBar() { prefWidth = 150 }
   
@@ -142,7 +142,7 @@ class Gui(sessionManager: SessionManagerTrait) extends Observer {
     fileChooser.title = "Open File or Import Session"
     fileChooser.extensionFilters.addAll(
     new FileChooser.ExtensionFilter("All Supported", Seq("*.txt", "*.xml", "*.json")),
-    new FileChooser.ExtensionFilter("WebScraper Session", Seq("*.xml", "*.json")),
+    new FileChooser.ExtensionFilter("WebReport Session", Seq("*.xml", "*.json")),
     new FileChooser.ExtensionFilter("Text Files", "*.txt")
     )
     val selectedFile = fileChooser.showOpenDialog(parentStage)

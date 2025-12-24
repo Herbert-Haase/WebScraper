@@ -11,7 +11,7 @@ import de.htwg.webreport.model.analyzer.impl1.SimpleAnalyzer
 import de.htwg.webreport.model.webClient.WebClientTrait
 import de.htwg.webreport.model.webClient.impl1.SimpleWebClient
 
-class WebScraperModule extends AbstractModule {
+class WebReportModule extends AbstractModule {
   override def configure(): Unit = {
     bind(classOf[AnalyzerTrait]).to(classOf[SimpleAnalyzer])
     bind(classOf[WebClientTrait]).to(classOf[SimpleWebClient])

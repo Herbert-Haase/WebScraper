@@ -19,7 +19,7 @@ class IntegrationSpec extends AnyWordSpec with Matchers {
     (sessionManager, tui, fileIO)
   }
 
-  "The WebScraper System" should {
+  "The WebReport System" should {
     "transition from InitialState to FilterState when data is loaded via text" in {
       val (sessionManager, tui, _) = createSystem()
       

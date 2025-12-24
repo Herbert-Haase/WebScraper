@@ -6,10 +6,10 @@ import com.google.inject.Guice
 import de.htwg.webreport.controller.sessionManager.SessionManagerTrait
 import de.htwg.webreport.model.fileio.FileIOTrait
 
-class WebScraperModuleSpec extends AnyWordSpec with Matchers {
-  "The WebScraperModule" should {
+class WebReportModuleSpec extends AnyWordSpec with Matchers {
+  "The WebReportModule" should {
     "configure the injector correctly" in {
-      val injector = Guice.createInjector(new WebScraperModule)
+      val injector = Guice.createInjector(new WebReportModule)
       
       val sessionManager = injector.getInstance(classOf[SessionManagerTrait])
       sessionManager should not be null
