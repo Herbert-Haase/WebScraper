@@ -16,7 +16,11 @@ lazy val root = project
       "org.openjfx" % "javafx-base" % "21.0.2" classifier "linux",
       "org.openjfx" % "javafx-media" % "21.0.2" classifier "linux",
       "org.openjfx" % "javafx-web" % "21.0.2" classifier "linux",
-      "com.google.inject" % "guice" % "7.0.0"
+      "com.google.inject" % "guice" % "7.0.0",
+      "org.scala-lang.modules" %% "scala-xml" % "2.2.0",
+      "com.typesafe.play" %% "play-json" % "2.10.4",
+      "org.scala-lang.modules" %% "scala-xml" % "2.2.0",
+      "com.typesafe.play" %% "play-json" % "2.10.4"
     ),
 
     coverageExcludedFiles := ".*Main\\.scala",

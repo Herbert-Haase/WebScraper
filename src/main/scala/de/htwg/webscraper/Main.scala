@@ -1,8 +1,8 @@
 package de.htwg.webscraper
 
 import com.google.inject.Guice
-import de.htwg.webscraper.controller.ControllerInterface
-import de.htwg.webscraper.controller.exporter.Exporter
+import de.htwg.webscraper.controller.sessionManager.SessionManagerTrait
+import de.htwg.webscraper.model.fileio.FileIOTrait
 import de.htwg.webscraper.aview.{Tui, Gui}
 import scalafx.application.JFXApp3
 import scalafx.application.JFXApp3.PrimaryStage
@@ -12,11 +12,11 @@ object Main extends JFXApp3 {
 
     val injector = Guice.createInjector(new WebScraperModule)
 
-    val controller = injector.getInstance(classOf[ControllerInterface])
-    val exporter = injector.getInstance(classOf[Exporter])
+    val sessionManager = injector.getInstance(classOf[SessionManagerTrait])
+    val fileIO = injector.getInstance(classOf[FileIOTrait])
 
-    val tui = new Tui(controller, exporter)
-    val gui = new Gui(controller, exporter)
+    val tui = new Tui(sessionManager, fileIO)
+    val gui = new Gui(sessionManager)
 
     val tuiThread = new Thread(() => {
       tui.run()

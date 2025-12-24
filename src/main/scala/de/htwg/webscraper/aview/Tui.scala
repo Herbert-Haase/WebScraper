@@ -1,18 +1,12 @@
 package de.htwg.webscraper.aview
 
-import _root_.de.htwg.webscraper.controller.ControllerInterface
-import de.htwg.webscraper.controller.exporter.Exporter
-import _root_.de.htwg.webscraper.util.Observer
+import de.htwg.webscraper.controller.sessionManager.SessionManagerTrait
+import de.htwg.webscraper.model.fileio.FileIOTrait
+import de.htwg.webscraper.util.Observer
 import scala.io.StdIn.readLine
 
-
-class Tui(controller: ControllerInterface, val exporter: Exporter) extends Observer {
-  controller.add(this)
-
-  private val famousLibs = Set(
-    "react", "angular", "vue", "svelte", "jquery", "bootstrap", 
-    "tailwind", "d3", "three", "lodash", "moment", "axios", "spring", "guice"
-  )
+class Tui(sessionManager: SessionManagerTrait, val fileIO: FileIOTrait) extends Observer {
+  sessionManager.add(this)
 
   private var state: TuiState = new InitialState()
   private var renderer: Renderer = new SimpleReport()
@@ -26,58 +20,46 @@ class Tui(controller: ControllerInterface, val exporter: Exporter) extends Obser
 
   private def updateRenderer(): Unit = {
     var r: Renderer = new SimpleReport()
-    if (showLowerCase) r = new LowerCaseDecorator(r)
     if (showNumbers) r = new LineNumberDecorator(r)
     renderer = r
     update(false)
   }
 
   def run(): Unit = {
-    println("Welcome to WebScraper")
+    update(false) 
     inputLoop()
   }
 
   def inputLoop(): Unit = {
-    state.displayPrompt()
     Option(readLine()) match {
       case Some(input) =>
-        state.handleInput(input, this, controller, exporter)
+        state.handleInput(input, this, sessionManager, fileIO)
         inputLoop()
       case None =>
         println("\nExiting.")
     }
   }
 
-  private def renderComplexityBar(score: Int): String = {
-    // Normalizing score 0-100 for display. 
-    // Low (Green) < 20, Med (Yellow) < 50, High (Red) > 50
-    val maxBar = 20
-    val filled = Math.min((score / 10.0).toInt, maxBar)
-    val bar = "=" * filled + ">" + " " * (maxBar - filled)
+  override def update(isFilterUpdate: Boolean): Unit = {
+    val width = getTerminalWidth
     
-    val color = if (score < 20) Console.GREEN 
-                else if (score < 50) Console.YELLOW 
-                else Console.RED
+    if (sessionManager.data.source != "empty" && state.isInstanceOf[InitialState]) {
+      state = new FilterState()
+    } 
+    else if (sessionManager.data.source == "empty" && state.isInstanceOf[FilterState]) {
+      state = new InitialState()
+    }
+
+    print("\u001b[H\u001b[2J")
+    System.out.flush()
     
-    s"[$color$bar${Console.RESET}] ($score)"
+    println(renderer.render(sessionManager.data, width))
+    
+    state.displayPrompt()
   }
 
-    override def update(isFilterUpdate: Boolean): Unit = {
-    val d = controller.data
-    println("-" * 60)
-    println(s"[Metrics]")
-    println(s" Chars: ${d.characterCount} | Words: ${d.wordCount} | Lines: ${d.lineCount}")
-    println(s" Images: ${d.imageCount} | Links: ${d.linkCount}")
-    
-    println(s" Complexity: ${renderComplexityBar(d.complexity)}")
-    
-    val visibleLibs = d.libraries.filter(l => famousLibs.exists(fl => l.toLowerCase.contains(fl)))
-    println(s" Famous Libs: ${if (visibleLibs.isEmpty) "None detected" else visibleLibs.mkString(", ")}")
-    
-    println("-" * 60)
-    println(renderer.render(controller.data, 60))
-    if (isFilterUpdate) {
-      println(s">> Filter active. Matches: ${controller.data.displayLines.size}")
-    }
+  private def getTerminalWidth: Int = {
+    import scala.sys.process._
+    try { "tput cols".!!.trim.toInt } catch { case _: Exception => 80 }
   }
 }
