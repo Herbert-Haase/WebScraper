@@ -47,9 +47,14 @@ jobs:
         fetch-depth: 0
         ref: ${{ github.event.pull_request.head.sha }}
 
+    - name: Install GUI dependencies
+        run: |
+        sudo apt-get update
+        sudo apt-get install -y xvfb libgtk-3-0 libgbm1 libasound2
+
     - name: Run tests and generate coverage report
-      # Added 'coverageReport' so SonarCloud can read the XML data
-      run: sbt clean coverage test coverageReport
+      # Use 'xvfb-run' to provide a virtual display for JavaFX/WebView
+      run: xvfb-run --auto-servernum sbt clean coverage test coverageReport
 
     - name: Upload coverage data to Coveralls
       uses: coverallsapp/github-action@v2

@@ -13,6 +13,8 @@ import java.util.concurrent.TimeUnit
 
 class GuiSpec extends AnyWordSpec with Matchers {
   new JFXPanel()
+  System.setProperty("glass.platform", "gtk")
+  System.setProperty("java.awt.headless", "false") // JavaFX needs this to be false to even try to open a display
 
 
     "Gui" should {
