@@ -1,8 +1,8 @@
 ## WebReport Scala3 WebScraper
 [![Coverage Status](https://coveralls.io/repos/github/Herbert-Haase/WebReport/badge.svg?branch=main)](https://coveralls.io/github/Herbert-Haase/WebReport?branch=main)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Herbert-Haase/WebReport/scala.yml)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Herbert-Haase_WebReport&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Herbert-Haase_WebReport)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Herbert-Haase_WebReport&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Herbert-Haase_WebReport)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Herbert-Haase_WebScraper&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Herbert-Haase_WebScraper)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Herbert-Haase_WebScraper&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Herbert-Haase_WebScraper)
 
 ```text
 ██╗    ██╗███████╗██████╗ ██████╗ ███████╗██████╗  ██████╗ ██████╗ ████████╗
