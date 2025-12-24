@@ -1,39 +1,39 @@
-package de.htwg.webscraper.controller.impl1.controller
+package de.htwg.webscraper.controller.sessionManager.impl1
 
 import com.google.inject.Inject
-import de.htwg.webscraper.controller.ControllerInterface
-import de.htwg.webscraper.model.analyzer.Analyzer
-import de.htwg.webscraper.model.data.ProjectData
-import de.htwg.webscraper.model.webClient.WebClient
-import de.htwg.webscraper.model.fileio.FileIO
+import de.htwg.webscraper.controller.sessionManager.SessionManagerTrait
+import de.htwg.webscraper.model.analyzer.AnalyzerTrait
+import de.htwg.webscraper.model.data.DataTrait
+import de.htwg.webscraper.model.webClient.WebClientTrait
+import de.htwg.webscraper.model.fileio.FileIOTrait
 import de.htwg.webscraper.util.{Command, Memento, Originator, UndoManager}
 import scala.util.{Failure, Success, Try, Using}
 import scala.io.Source
 import scala.compiletime.uninitialized
 
-class Controller @Inject() (
-    val analyzer: Analyzer,
-    val client: WebClient,
-    val fileIO: FileIO
-) extends ControllerInterface with Originator {
+class SessionManager @Inject() (
+    val analyzer: AnalyzerTrait,
+    val client: WebClientTrait,
+    val fileIO: FileIOTrait
+) extends SessionManagerTrait with Originator {
 
   override def storageMode: String = fileIO.mode
 
-  private var dataState: ProjectData = analyzer.process(List.empty, Nil, "empty")
+  private var dataState: DataTrait = analyzer.process(List.empty, None, "empty")
   private val undoManager = new UndoManager
   
-  private var sessionHistory: List[ProjectData] = Nil
+  private var sessionHistory: List[DataTrait] = Nil
 
-  override def data: ProjectData = dataState
+  override def data: DataTrait = dataState
 
   override def createMemento(): Memento = Memento(dataState)
 
   override def restore(m: Memento): Unit = {
-    dataState = m.state match { case d: ProjectData => d }
+    dataState = m.state match { case d: DataTrait => d }
     notifyObservers()
   }
 
-  class SetStateCommand(newState: ProjectData) extends Command {
+  class SetStateCommand(newState: DataTrait) extends Command {
     var memento: Memento = uninitialized
     override def execute(): Unit = {
       memento = createMemento()
@@ -71,7 +71,7 @@ class Controller @Inject() (
   override def redo(): Unit = undoManager.redoStep()
 
   override def reset(): Unit = {
-    dataState = analyzer.process(List.empty, Nil, "empty")
+    dataState = analyzer.process(List.empty, None, "empty")
     sessionHistory = Nil 
     notifyObservers()
   }
@@ -89,7 +89,7 @@ class Controller @Inject() (
         manualText.getOrElse("").split("\n").toList
       }
       val label = path.getOrElse("text-input")
-      val newState = analyzer.process(lines, Nil, label)
+      val newState = analyzer.process(lines, None, label)
       
       dataState = newState
       sessionHistory = sessionHistory :+ newState
@@ -105,11 +105,11 @@ class Controller @Inject() (
       memento = createMemento()
       client.download(url) match {
         case Success(content) =>
-          val newState = analyzer.process(content.split("\n").toList, Nil, url)
+          val newState = analyzer.process(content.split("\n").toList, None, url)
           dataState = newState
           sessionHistory = sessionHistory :+ newState
         case Failure(e) =>
-          val newState = analyzer.process(List(s"Error: ${e.getMessage}"), Nil, url)
+          val newState = analyzer.process(List(s"Error: ${e.getMessage}"), None, url)
           dataState = newState
           sessionHistory = sessionHistory :+ newState
       }
@@ -124,7 +124,7 @@ class Controller @Inject() (
     override def execute(): Unit = {
       memento = createMemento()
       val filteredLines = dataState.originalLines.filter(_.toLowerCase.contains(word.toLowerCase))
-      dataState = analyzer.process(dataState.originalLines, filteredLines, dataState.source)
+      dataState = analyzer.process(dataState.originalLines, Some(filteredLines), dataState.source)
       notifyObservers(isFilterUpdate = true)
     }
     override def undo(): Unit = restore(memento)

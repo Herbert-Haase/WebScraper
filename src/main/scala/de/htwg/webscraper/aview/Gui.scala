@@ -1,6 +1,6 @@
 package de.htwg.webscraper.aview
 
-import de.htwg.webscraper.controller.ControllerInterface
+import de.htwg.webscraper.controller.sessionManager.SessionManagerTrait
 import de.htwg.webscraper.util.Observer
 import scalafx.scene.Scene
 import scalafx.application.Platform
@@ -11,43 +11,45 @@ import scalafx.stage.FileChooser
 import scalafx.geometry.Insets
 import scalafx.Includes._
 import javafx.concurrent.Worker
+import javafx.beans.value.{ChangeListener, ObservableValue}
+import scalafx.scene.web.WebView
 import scala.compiletime.uninitialized
 
-class Gui(controller: ControllerInterface) extends Observer {
-  controller.add(this)
+class Gui(sessionManager: SessionManagerTrait) extends Observer {
+  sessionManager.add(this)
 
   private val famousLibs = Set("react", "angular", "vue", "svelte", "jquery", "bootstrap", "tailwind")
   private var parentStage: scalafx.stage.Window = uninitialized
 
   // -- UI Components --
-  private val webView = new WebView()
-  private val textArea = new TextArea { editable = false; styleClass += "code-area" }
-  private val urlField = new TextField {
+  private lazy val webView = new WebView()
+  private lazy val textArea = new TextArea { editable = false; styleClass += "code-area" }
+  private lazy val urlField = new TextField {
     promptText = "http://..."
     hgrow = Priority.Always
     onAction = _ => {
       if (text.value.nonEmpty) {
-        controller.downloadFromUrl(text.value)
+        sessionManager.downloadFromUrl(text.value)
         text.value = ""
       }
     }
   }
-  val modeLabel = new Label(s"Storage: ${controller.storageMode}") {
+  lazy val modeLabel = new Label(s"Storage: ${sessionManager.storageMode}") {
     style = "-fx-text-fill: #808080; -fx-padding: 0 0 0 10;"
   }
   
-  private val statusLabel = new Label("Welcome to WebScraper")
-  private val complexityLabel = new Label("Complexity: 0")
-  private val complexityBar = new ProgressBar() { prefWidth = 150 }
+  private lazy val statusLabel = new Label("Welcome to WebScraper")
+  private lazy val complexityLabel = new Label("Complexity: 0")
+  private lazy val complexityBar = new ProgressBar() { prefWidth = 150 }
   
-  private val famousLibLabel = new Label("Libraries: None") {
+  private lazy val famousLibLabel = new Label("Libraries: None") {
     maxWidth = 400
     styleClass += "dashboard-text"
   }
-  private val detailStatsLabel = new Label("Images: 0 | Links: 0")
+  private lazy val detailStatsLabel = new Label("Images: 0 | Links: 0")
 
   // -- Toolbar --
-  private val mainToolbar = new ToolBar {
+  private lazy val mainToolbar = new ToolBar {
     content = List(
       new Button("📂 Open/Import") { onAction = _ => openFileChooser() },
       
@@ -56,15 +58,15 @@ class Gui(controller: ControllerInterface) extends Observer {
       new Button("⬇ Download") { 
         onAction = _ => {
           if (urlField.text.value.nonEmpty) {
-            controller.downloadFromUrl(urlField.text.value)
+            sessionManager.downloadFromUrl(urlField.text.value)
             urlField.text.value = ""
           }
         }
       },
       
       new Separator,
-      new Button("↶") { onAction = _ => controller.undo(); tooltip = new Tooltip("Undo") },
-      new Button("↷") { onAction = _ => controller.redo(); tooltip = new Tooltip("Redo") },
+      new Button("↶") { onAction = _ => sessionManager.undo(); tooltip = new Tooltip("Undo") },
+      new Button("↷") { onAction = _ => sessionManager.redo(); tooltip = new Tooltip("Redo") },
       
       new Separator,
       new Button("💾 Export Session") { 
@@ -76,12 +78,12 @@ class Gui(controller: ControllerInterface) extends Observer {
       
       new Button("Reset") {
         style = "-fx-background-color: #cdb91dff; -fx-text-fill: white;"
-        onAction = _ => { controller.reset(); urlField.text = "" }
+        onAction = _ => { sessionManager.reset(); urlField.text = "" }
       },
     )
   }
 
-  private val statsBar = new HBox(20) {
+  private lazy val statsBar = new HBox(20) {
     padding = Insets(10)
     styleClass += "dashboard-bar"
     children = Seq(
@@ -91,7 +93,7 @@ class Gui(controller: ControllerInterface) extends Observer {
     )
   }
 
-  private val mainLayout = new BorderPane {
+  private lazy val mainLayout = new BorderPane {
     top = new VBox(mainToolbar, statsBar)
     center = textArea
     bottom = new HBox {
@@ -112,6 +114,27 @@ class Gui(controller: ControllerInterface) extends Observer {
     myScene
   }
 
+    // -- Web Engine Configuration for Navigation --
+  webView.engine.getLoadWorker.stateProperty.addListener(new ChangeListener[Worker.State] {
+    override def changed(observable: ObservableValue[? <: Worker.State], oldValue: Worker.State, newValue: Worker.State): Unit = {
+      if (newValue == Worker.State.SUCCEEDED) {
+      }
+    }
+  })
+
+  // This listener intercepts link clicks in the WebView
+  webView.engine.locationProperty.addListener(new ChangeListener[String] {
+    override def changed(observable: ObservableValue[? <: String], oldValue: String, newValue: String): Unit = {
+      if (newValue != null && newValue.nonEmpty) {
+        urlField.text = newValue
+
+        Platform.runLater {
+          sessionManager.downloadFromUrl(newValue)
+        }
+      }
+    }
+  })
+
   // --- File Operations ---
   
   private def openFileChooser(): Unit = {
@@ -124,7 +147,7 @@ class Gui(controller: ControllerInterface) extends Observer {
     )
     val selectedFile = fileChooser.showOpenDialog(parentStage)
     if (selectedFile != null) {
-      controller.loadFromFile(selectedFile.getAbsolutePath)
+      sessionManager.loadFromFile(selectedFile.getAbsolutePath)
     }
   }
 
@@ -137,14 +160,14 @@ class Gui(controller: ControllerInterface) extends Observer {
     )
     val file = fileChooser.showSaveDialog(parentStage)
     if (file != null) {
-      controller.saveSession(file.getAbsolutePath)
+      sessionManager.saveSession(file.getAbsolutePath)
     }
   }
 
   // --- Update Logic ---
   override def update(isFilterUpdate: Boolean): Unit = {
     Platform.runLater {
-      val d = controller.data
+      val d = sessionManager.data
       val content = d.displayLines.mkString("\n")
 
       // Status Bar
@@ -160,10 +183,7 @@ class Gui(controller: ControllerInterface) extends Observer {
 
       detailStatsLabel.text = s"Images: ${d.imageCount} | Links: ${d.linkCount}"
       
-      val visibleLibs = d.libraries
-        .filter(l => famousLibs.exists(fl => l.toLowerCase.contains(fl)))
-        .take(8)
-        
+      val visibleLibs = GuiLogic.getVisibleLibs(d.libraries, famousLibs)        
       famousLibLabel.text = "Famous Libs: " + (if (visibleLibs.isEmpty) "None" else visibleLibs.mkString(", "))
       if (d.libraries.nonEmpty) {
          famousLibLabel.tooltip = new Tooltip(d.libraries.mkString("\n"))
@@ -184,5 +204,14 @@ class Gui(controller: ControllerInterface) extends Observer {
   private def isHtml(content: String): Boolean = {
     val c = content.trim.toLowerCase
     c.startsWith("<!doctype html") || c.startsWith("<html") || c.startsWith("<!--")
+  }
+}
+
+// for testing
+object GuiLogic {
+  def getVisibleLibs(libs: List[String], famous: Set[String]): List[String] = {
+    libs.filter(l => 
+      famous.exists(f => l.toLowerCase.contains(f.toLowerCase))
+    ).distinct.take(8)
   }
 }

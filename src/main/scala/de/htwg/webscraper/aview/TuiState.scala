@@ -1,13 +1,13 @@
 package de.htwg.webscraper.aview
 
-import _root_.de.htwg.webscraper.controller.ControllerInterface
+import de.htwg.webscraper.controller.sessionManager.SessionManagerTrait
 import scala.io.StdIn.readLine
 import scala.collection.mutable.ListBuffer
 import scala.util.{Success, Failure}
-import de.htwg.webscraper.model.fileio.FileIO
+import de.htwg.webscraper.model.fileio.FileIOTrait
 
 trait TuiState {
-  def handleInput(input: String, tui: Tui, controller: ControllerInterface, fileIO: FileIO): Unit
+  def handleInput(input: String, tui: Tui, sessionManager: SessionManagerTrait, fileIO: FileIOTrait): Unit
   def displayPrompt(): Unit
 }
 
@@ -20,7 +20,7 @@ class InitialState extends TuiState {
     print(prompt)
   }
 
-  override def handleInput(input: String, tui: Tui, controller: ControllerInterface, fileIO: FileIO): Unit = {
+  override def handleInput(input: String, tui: Tui, sessionManager: SessionManagerTrait, fileIO: FileIOTrait): Unit = {
     val parts = input.trim.split("\\s+", 2)
     val command = parts(0).toLowerCase
     val argument = if (parts.length > 1) parts(1) else ""
@@ -28,12 +28,12 @@ class InitialState extends TuiState {
     command match {
       case "download" => 
         tui.changeState(new FilterState)
-        controller.downloadFromUrl(argument)
+        sessionManager.downloadFromUrl(argument)
         
       case "import" | "load" => 
         if (argument.nonEmpty) {
           tui.changeState(new FilterState)
-          controller.loadFromFile(argument)
+          sessionManager.loadFromFile(argument)
         } else {
           println("Usage: import <filepath>")
           tui.update(false) 
@@ -47,7 +47,7 @@ class InitialState extends TuiState {
           lineOpt = Option(readLine())
         }
         tui.changeState(new FilterState)
-        controller.loadFromText(buffer.mkString("\n"))
+        sessionManager.loadFromText(buffer.mkString("\n"))
         
       case "exit" | "quit" => 
         println("Bye!")
@@ -65,30 +65,30 @@ class FilterState extends TuiState {
     println("\n[Filter] Enter word to filter, 'export <path>', 'ln', 'undo', 'redo', 'reset', or 'exit':")
   }
 
-  override def handleInput(input: String, tui: Tui, controller: ControllerInterface, FileIO: FileIO): Unit = {
+  override def handleInput(input: String, tui: Tui, sessionManager: SessionManagerTrait, fileIO: FileIOTrait): Unit = {
     val parts = input.split(" ").toList
 
     parts match {
-      case "undo" :: Nil => controller.undo()
-      case "redo" :: Nil => controller.redo()
+      case "undo" :: Nil => sessionManager.undo()
+      case "redo" :: Nil => sessionManager.redo()
       case "ln" :: Nil => tui.toggleLineNumbers()
       case "reset" :: Nil =>
-        controller.reset()
+        sessionManager.reset()
         tui.changeState(new InitialState)
       case "exit" :: Nil => System.exit(0)
       case "save" :: Nil => 
         println("Enter filename:")
         val path = readLine()
-        controller.saveSession(path)
+        sessionManager.saveSession(path)
       case "load" :: Nil =>
         println("Enter filename:")
         val path = readLine()
-        controller.loadFromFile(path)
+        sessionManager.loadFromFile(path)
 
 
       case _ =>
         if (parts.length == 1 && parts.head.nonEmpty) {
-          controller.filter(parts.head)
+          sessionManager.filter(parts.head)
         } else if (input.nonEmpty) {
           println("Invalid command.")
         }

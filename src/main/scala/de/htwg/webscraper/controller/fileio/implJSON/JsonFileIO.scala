@@ -1,13 +1,13 @@
-package de.htwg.webscraper.model.fileio.impl
+package de.htwg.webscraper.model.fileio.implJSON
 
-import de.htwg.webscraper.model.fileio.FileIO
-import de.htwg.webscraper.model.data.ProjectData
+import de.htwg.webscraper.model.fileio.FileIOTrait
+import de.htwg.webscraper.model.data.DataTrait
 import de.htwg.webscraper.model.data.impl1.Data
 import play.api.libs.json._
 import java.io.{File, PrintWriter}
 import scala.io.Source
 
-class JsonFileIO extends FileIO {
+class JsonFileIO extends FileIOTrait {
   override val mode: String = "JSON"
 
   implicit val wordFormat: Format[(String, Int)] = new Format[(String, Int)] {
@@ -20,7 +20,7 @@ class JsonFileIO extends FileIO {
 
   implicit val dataFormat: OFormat[Data] = Json.format[Data]
 
-  override def save(dataList: List[ProjectData], filePath: String): Unit = {
+  override def save(dataList: List[DataTrait], filePath: String): Unit = {
     val concreteList = dataList.map {
       case d: Data => d
       case other => Data.restore(
@@ -35,14 +35,14 @@ class JsonFileIO extends FileIO {
     pw.close()
   }
 
-  override def load(filePath: String): List[ProjectData] = {
-    val fileContent = Source.fromFile(filePath).getLines.mkString
-    val json = Json.parse(fileContent)
-    json.validate[List[Data]] match {
-      case JsSuccess(list, _) => list
-      case JsError(errors) => 
-        println(s"JSON Parse Error: $errors")
-        Nil
-    }
+  override def load(filePath: String): List[DataTrait] = {
+    val file = new File(filePath)
+    if (!file.exists()) throw new java.io.FileNotFoundException(s"File not found: $filePath")
+    
+    val source = Source.fromFile(file)
+    val content = source.getLines().mkString
+    source.close()
+    
+    Json.parse(content).as[List[Data]] 
   }
 }

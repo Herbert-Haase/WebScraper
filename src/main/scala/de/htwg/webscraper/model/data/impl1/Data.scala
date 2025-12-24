@@ -1,6 +1,6 @@
 package de.htwg.webscraper.model.data.impl1
 
-import de.htwg.webscraper.model.data.ProjectData
+import de.htwg.webscraper.model.data.DataTrait
 
 case class Data(
     source: String,
@@ -13,7 +13,7 @@ case class Data(
     complexity: Int,
     images: List[String],
     links: List[String]
-) extends ProjectData {
+) extends DataTrait {
   override def imageCount: Int = images.length
   override def linkCount: Int = links.length
 }
@@ -51,14 +51,16 @@ object Data {
     val codeLibRegex = """^(import|using|#include)\s+(\S+)""".r
 
     val webLibs = lines.flatMap(l => webLibRegex.findAllMatchIn(l).map(_.group(3)))
-    val codeLibs = lines.map(_.trim).filter(l => l.startsWith("import ") || l.startsWith("using "))
+    val codeLibs = lines.map(_.trim)
+      .filter(l => l.startsWith("import ") || l.startsWith("using "))
       .map(_.split(" ").lastOption.getOrElse("?"))
 
     val allLibs = (webLibs ++ codeLibs)
-      .map(_.split("/").last) // Filename
-      .map(_.takeWhile(_ != '?')) // Remove query params
-      .map(_.replaceAll("""[-._][0-9a-fA-F]{8,}.*$""", "")) 
-      .map(_.replaceAll("""(\.min)?\.(js|css)$""", ""))
+      .map(_.split("/").last)               // Get filename
+      .map(_.takeWhile(_ != '?'))           // Remove query params
+      .map(_.replaceAll("""(\.min)?\.(js|css)$""", "")) // Strip extensions
+      .map(_.split("\\.").last)             // <--- RESTORED: Get 'Scraper' from 'de.htwg.Scraper'
+      .map(_.replaceAll("""[-._][0-9a-fA-F]{8,}.*$""", "")) // Clean hashes
       .distinct
       .filter(_.length > 1)
     val complexityScore = words.count(w => Set("if", "else", "for", "while", "case", "catch", "match", "try").contains(w))

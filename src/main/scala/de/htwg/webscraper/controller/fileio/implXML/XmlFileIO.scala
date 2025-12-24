@@ -1,15 +1,15 @@
-package de.htwg.webscraper.model.fileio.impl
+package de.htwg.webscraper.model.fileio.implXML
 
-import de.htwg.webscraper.model.fileio.FileIO
-import de.htwg.webscraper.model.data.ProjectData
+import de.htwg.webscraper.model.fileio.FileIOTrait
+import de.htwg.webscraper.model.data.DataTrait
 import de.htwg.webscraper.model.data.impl1.Data
 import scala.xml.{NodeSeq, PrettyPrinter, XML}
 import java.io.{File, PrintWriter}
 
-class XmlFileIO extends FileIO {
+class XmlFileIO extends FileIOTrait {
   override val mode: String = "XML"
 
-  override def save(dataList: List[ProjectData], filePath: String): Unit = {
+  override def save(dataList: List[DataTrait], filePath: String): Unit = {
     val xml = <session>
       {dataList.map(dataToXml)}
     </session>
@@ -20,12 +20,12 @@ class XmlFileIO extends FileIO {
     pw.close()
   }
 
-  override def load(filePath: String): List[ProjectData] = {
+  override def load(filePath: String): List[DataTrait] = {
     val file = XML.loadFile(filePath)
     (file \ "analysis").map(xmlToData).toList
   }
 
-  private def dataToXml(data: ProjectData) = {
+  private def dataToXml(data: DataTrait) = {
     <analysis source={data.source}>
       <meta>
         <chars>{data.characterCount}</chars>
@@ -44,7 +44,7 @@ class XmlFileIO extends FileIO {
     </analysis>
   }
 
-  private def xmlToData(node: scala.xml.Node): ProjectData = {
+  private def xmlToData(node: scala.xml.Node): DataTrait = {
     val source = (node \ "@source").text
     val chars = (node \ "meta" \ "chars").text.toInt
     val wordCount = (node \ "meta" \ "words").text.toInt

@@ -1,6 +1,6 @@
 package de.htwg.webscraper.model.data
 
-trait ProjectData {
+trait DataTrait {
   def source: String
   def originalLines: List[String]
   def displayLines: List[String]
@@ -16,5 +16,5 @@ trait ProjectData {
   def lineCount: Int = displayLines.length
 }
 
-object ProjectData {
+object DataTrait {
 }

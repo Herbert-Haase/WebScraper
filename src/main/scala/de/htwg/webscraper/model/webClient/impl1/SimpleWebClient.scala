@@ -1,13 +1,13 @@
-package de.htwg.webscraper.model.webClient.impl1.simpleWebClient
+package de.htwg.webscraper.model.webClient.impl1
 
-import de.htwg.webscraper.model.webClient.WebClient
+import de.htwg.webscraper.model.webClient.WebClientTrait
 
 import scala.io.Source
 import scala.util.Using
 import scala.util.{Try, Success, Failure}
 
 // Concrete Implementation
-class SimpleWebClient extends WebClient {
+class SimpleWebClient extends WebClientTrait {
   override def get(url: String): Try[String] = Try {
     val source = Source.fromURL(url)
     val content = source.mkString

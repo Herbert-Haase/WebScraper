@@ -1,12 +1,12 @@
 package de.htwg.webscraper.aview
 
-import de.htwg.webscraper.controller.ControllerInterface
-import de.htwg.webscraper.model.fileio.FileIO
+import de.htwg.webscraper.controller.sessionManager.SessionManagerTrait
+import de.htwg.webscraper.model.fileio.FileIOTrait
 import de.htwg.webscraper.util.Observer
 import scala.io.StdIn.readLine
 
-class Tui(controller: ControllerInterface, val fileIO: FileIO) extends Observer {
-  controller.add(this)
+class Tui(sessionManager: SessionManagerTrait, val fileIO: FileIOTrait) extends Observer {
+  sessionManager.add(this)
 
   private var state: TuiState = new InitialState()
   private var renderer: Renderer = new SimpleReport()
@@ -26,16 +26,14 @@ class Tui(controller: ControllerInterface, val fileIO: FileIO) extends Observer 
   }
 
   def run(): Unit = {
-    // Initial Render to show the Welcome Box
     update(false) 
     inputLoop()
   }
 
   def inputLoop(): Unit = {
-    // REMOVED state.displayPrompt() from here to avoid double prompts
     Option(readLine()) match {
       case Some(input) =>
-        state.handleInput(input, this, controller, fileIO)
+        state.handleInput(input, this, sessionManager, fileIO)
         inputLoop()
       case None =>
         println("\nExiting.")
@@ -45,24 +43,18 @@ class Tui(controller: ControllerInterface, val fileIO: FileIO) extends Observer 
   override def update(isFilterUpdate: Boolean): Unit = {
     val width = getTerminalWidth
     
-    // --- REACTIVE STATE SYNC ---
-    // If data exists but we are in InitialState, auto-switch to FilterState.
-    // This allows GUI actions to unlock TUI commands automatically.
-    if (controller.data.source != "empty" && state.isInstanceOf[InitialState]) {
+    if (sessionManager.data.source != "empty" && state.isInstanceOf[InitialState]) {
       state = new FilterState()
     } 
-    // If data was reset (is empty) but we are in FilterState, auto-switch back.
-    else if (controller.data.source == "empty" && state.isInstanceOf[FilterState]) {
+    else if (sessionManager.data.source == "empty" && state.isInstanceOf[FilterState]) {
       state = new InitialState()
     }
-    // ---------------------------
 
-    print("\u001b[H\u001b[2J") // Clear Screen
+    print("\u001b[H\u001b[2J")
     System.out.flush()
     
-    println(renderer.render(controller.data, width))
+    println(renderer.render(sessionManager.data, width))
     
-    // The prompt is now part of the update cycle
     state.displayPrompt()
   }
 

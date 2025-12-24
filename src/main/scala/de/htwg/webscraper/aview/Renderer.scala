@@ -1,16 +1,16 @@
 package de.htwg.webscraper.aview
 
-import de.htwg.webscraper.model.data.ProjectData
+import de.htwg.webscraper.model.data.DataTrait
 import scala.collection.mutable.ListBuffer
 
 trait Renderer {
-  def render(data: ProjectData, width: Int): String
+  def render(data: DataTrait, width: Int): String
 }
 
 
 abstract class ReportTemplate extends Renderer {
 
-  final override def render(data: ProjectData, width: Int): String = {
+  final override def render(data: DataTrait, width: Int): String = {
     val b = new StringBuilder()
     val effectiveWidth = if (width > 20) width else 80
     
@@ -27,10 +27,10 @@ abstract class ReportTemplate extends Renderer {
   protected def buildHeader(width: Int): String = "┌" + "─" * (width - 2) + "┐\n"
   protected def buildFooter(width: Int): String = "└" + "─" * (width - 2) + "┘\n"
 
-  protected def buildBody(data: ProjectData, width: Int): String
+  protected def buildBody(data: DataTrait, width: Int): String
 
 
-  private def buildDashboard(data: ProjectData, width: Int): String = {
+  private def buildDashboard(data: DataTrait, width: Int): String = {
     val commonWords = data.mostCommonWords.take(5).map { case (w, c) => s"'$w'($c)" }.mkString(", ")
     
     val maxBar = 15
@@ -63,7 +63,7 @@ abstract class ReportTemplate extends Renderer {
 }
 
 class SimpleReport extends ReportTemplate {
-  override protected def buildBody(data: ProjectData, width: Int): String = {
+  override protected def buildBody(data: DataTrait, width: Int): String = {
     if (data.displayLines.isEmpty || data.source == "empty") {
       return renderWelcome(width)
     }
@@ -150,11 +150,11 @@ class SimpleReport extends ReportTemplate {
 
 abstract class RendererDecorator(decorated: Renderer) extends Renderer {
 
-  override def render(data: ProjectData, width: Int): String = decorated.render(data, width)
+  override def render(data: DataTrait, width: Int): String = decorated.render(data, width)
 }
 
 class LineNumberDecorator(decorated: Renderer) extends RendererDecorator(decorated) {
-  override def render(data: ProjectData, width: Int): String = {
+  override def render(data: DataTrait, width: Int): String = {
     val rawOutput = decorated.render(data, width)
     val lines = rawOutput.split("\n")
     var counter = 1

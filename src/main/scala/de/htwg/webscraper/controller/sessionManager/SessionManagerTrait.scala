@@ -1,10 +1,10 @@
-package de.htwg.webscraper.controller
+package de.htwg.webscraper.controller.sessionManager
 
-import de.htwg.webscraper.model.data.ProjectData
+import de.htwg.webscraper.model.data.DataTrait
 import de.htwg.webscraper.util.Observable
 
-trait ControllerInterface extends Observable {
-  def data: ProjectData
+trait SessionManagerTrait extends Observable {
+  def data: DataTrait
   def downloadFromUrl(url: String): Unit
   def loadFromFile(path: String): Unit
   def loadFromText(text: String): Unit
