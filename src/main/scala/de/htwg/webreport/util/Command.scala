@@ -2,7 +2,6 @@ package de.htwg.webreport.util
 
 import de.htwg.webreport.model.data.DataTrait
 
-// --- Memento Pattern ---
 case class Memento(state: DataTrait)
 
 trait Originator {
@@ -10,7 +9,6 @@ trait Originator {
   def restore(m: Memento): Unit
 }
 
-// --- Command Pattern ---
 trait Command {
   def execute(): Unit
   def undo(): Unit
@@ -24,7 +22,7 @@ class UndoManager {
   def doStep(command: Command): Unit = {
     undoStack = command :: undoStack
     command.execute()
-    redoStack = Nil // New action clears redo history
+    redoStack = Nil 
   }
 
   def undoStep(): Unit = {

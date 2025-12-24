@@ -4,13 +4,10 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import de.htwg.webreport.util.{Observable, Observer}
 
-// A concrete implementation of Observable that exposes the protected subscribers for testing
 class TestObservable extends Observable {
-  // Expose the protected subscribers list for white-box testing
   def getSubscribers: Vector[Observer] = subscribers
 }
 
-// A helper observer for testing, updated for the new Observer trait
 class TestObserver_o extends Observer {
   var wasNotified = false
   var lastFilterFlag: Boolean = false
@@ -52,22 +49,18 @@ class ObserverSpec extends AnyWordSpec with Matchers {
       observable.add(observer1)
       observable.add(observer2)
 
-      // Initial state
       observer1.wasNotified should be(false)
       observer2.wasNotified should be(false)
 
-      // Test default notification (isFilterUpdate = false)
       observable.notifyObservers()
       observer1.wasNotified should be(true)
       observer2.wasNotified should be(true)
       observer1.lastFilterFlag should be(false)
       observer2.lastFilterFlag should be(false)
 
-      // Reset state for next test
       observer1.wasNotified = false
       observer2.wasNotified = false
 
-      // Test filtered notification (isFilterUpdate = true)
       observable.notifyObservers(isFilterUpdate = true)
       observer1.wasNotified should be(true)
       observer2.wasNotified should be(true)
@@ -93,7 +86,7 @@ class ObserverSpec extends AnyWordSpec with Matchers {
 
       val observer = new TestObserver
 
-      observer.update()            // default: false
+      observer.update()
       observer.update(true)
 
       observer.calls shouldBe List(false, true)

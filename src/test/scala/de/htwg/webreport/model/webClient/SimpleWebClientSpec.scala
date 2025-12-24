@@ -1,4 +1,4 @@
-package de.htwg.webreport.model
+package de.htwg.webreport.model.webClient
 
 import de.htwg.webreport.model.webClient.impl1.SimpleWebClient
 import de.htwg.webreport.model.analyzer.impl1.SimpleAnalyzer
@@ -8,7 +8,7 @@ import org.scalatest.matchers.should.Matchers
 import scala.util.{Success, Failure}
 import java.io.{File, PrintWriter}
 
-class ComponentsSpec extends AnyWordSpec with Matchers {
+class SimpleWebClientSpec extends AnyWordSpec with Matchers {
 
   "A SimpleWebClient" should {
     "retrieve content successfully from a valid URL (Local File)" in {

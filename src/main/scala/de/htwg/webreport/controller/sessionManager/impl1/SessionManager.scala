@@ -76,8 +76,6 @@ class SessionManager @Inject() (
     notifyObservers()
   }
 
-  // --- Existing Commands (Refined) ---
-
   class LoadCommand(path: Option[String], manualText: Option[String]) extends Command {
     var memento: Memento = uninitialized
     override def execute(): Unit = {

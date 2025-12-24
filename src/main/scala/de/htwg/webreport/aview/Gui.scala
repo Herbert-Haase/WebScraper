@@ -191,7 +191,7 @@ class Gui(sessionManager: SessionManagerTrait) extends Observer {
 
       // Content View
       if (isHtml(content)) {
-        if (d.source.startsWith("http")) webView.engine.loadContent(content) // simplified
+        if (d.source.startsWith("http")) webView.engine.loadContent(content)
         else webView.engine.loadContent(content)
         if (mainLayout.center.value != webView) mainLayout.center = webView
       } else {

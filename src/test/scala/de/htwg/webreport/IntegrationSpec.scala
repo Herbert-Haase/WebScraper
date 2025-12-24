@@ -38,7 +38,6 @@ class IntegrationSpec extends AnyWordSpec with Matchers {
         sessionManager.loadFromText("Test Content")
         sessionManager.saveSession(tempFile.getAbsolutePath)
         
-        // Reset and Load
         sessionManager.reset()
         sessionManager.data.displayLines should be(empty)
         
@@ -51,7 +50,6 @@ class IntegrationSpec extends AnyWordSpec with Matchers {
 
     "maintain complexity stats across filtering" in {
       val (sessionManager, _, _) = createSystem()
-      // "if" is a complexity keyword
       sessionManager.loadFromText("if (condition) {\n  doSomething()\n}")
       val initialComplexity = sessionManager.data.complexity
       

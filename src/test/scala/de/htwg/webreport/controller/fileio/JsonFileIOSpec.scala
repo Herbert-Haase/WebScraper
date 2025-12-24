@@ -50,10 +50,8 @@ class JsonFileIOSpec extends AnyWordSpec with Matchers {
       }
 
     "handle loading from a non-existent file gracefully (or fail depending on implementation)" in {
-       // Your implementation currently crashes on invalid files or prints error
-       // This test ensures we at least execute that path
        val tempFile = File.createTempFile("empty", ".json")
-       tempFile.delete() // Make sure it doesn't exist
+       tempFile.delete()
        
        assertThrows[Exception] {
          fileIO.load(tempFile.getAbsolutePath)
@@ -63,7 +61,7 @@ class JsonFileIOSpec extends AnyWordSpec with Matchers {
     "handle loading malformed JSON" in {
         val tempFile = File.createTempFile("bad", ".json")
         val pw = new java.io.PrintWriter(tempFile)
-        pw.write("{ bad json }") // Invalid JSON
+        pw.write("{ bad json }")
         pw.close()
         
         assertThrows[com.fasterxml.jackson.core.JsonParseException] {

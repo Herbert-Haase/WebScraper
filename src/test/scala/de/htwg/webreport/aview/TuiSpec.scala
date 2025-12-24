@@ -1,4 +1,4 @@
-package de.htwg.webreport
+package de.htwg.webreport.aview
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers

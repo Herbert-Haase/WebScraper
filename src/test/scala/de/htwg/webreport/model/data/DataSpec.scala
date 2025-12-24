@@ -1,4 +1,4 @@
-package de.htwg.webreport.model
+package de.htwg.webreport.model.data
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
@@ -8,7 +8,6 @@ class DataSpec extends AnyWordSpec with Matchers {
   
   "Data" should {
     "calculate complexity score" in {
-      // "if" and "for" are keywords in your Data.scala regex
       val elements = List("if (something) { for (i) }")
       val data = Data.fromContent(elements, "test")
       
@@ -16,7 +15,6 @@ class DataSpec extends AnyWordSpec with Matchers {
     }
 
     "identify libraries correctly" in {
-      // Logic in Data.scala checks for script src
       val elements = List("<script src='jquery.min.js'></script>")
       val data = Data.fromContent(elements, "test")
       
@@ -31,17 +29,15 @@ class DataSpec extends AnyWordSpec with Matchers {
 
     "handle complex HTML and Code stats" in {
       val html = List(
-        "<script src='react-v18.min.js'></script>", // Cleans to 'react-v18'
-        "<link href='custom.css?v=123'>",           // Cleans to 'custom'
-        "import de.htwg.Scraper",                   // Extracted as 'de.htwg.Scraper'
+        "<script src='react-v18.min.js'></script>",
+        "<link href='custom.css?v=123'>",          
+        "import de.htwg.Scraper",                  
         "if (x) { while (y) { match { case _ => } } }", 
         "<img src='test.png'>",
         "<a href='http://link.com'>Link</a>"
       )
       val data = Data.fromContent(html, "complex-test")
       
-      // The logic in Data.scala takes the last part of the path and removes .min.js/.css
-      // but only removes specific hash-like suffixes. 
       data.libraries should contain allOf ("react-v18", "custom", "Scraper")
       data.complexity should be(4) 
       data.imageCount should be(1)
@@ -51,8 +47,8 @@ class DataSpec extends AnyWordSpec with Matchers {
     "handle malformed input for common words" in {
       val malformed = List("!!! ??? ...", "   ")
       val data = Data.fromContent(malformed, "edge-case")
-      data.wordCount should be(0) // Hits empty word filter
-      data.mostCommonWords should be(empty) // Hits words.isEmpty check
+      data.wordCount should be(0)
+      data.mostCommonWords should be(empty)
     }
 
     "handle all regex cases in calculateStats" in {
@@ -66,12 +62,6 @@ class DataSpec extends AnyWordSpec with Matchers {
       )
       val data = Data.fromContent(html, "full-coverage")
       
-      // Data.scala logic:
-      // Web: "test.js" -> "test", "style.css" -> "style"
-      // Code: "import some.lib" -> "some.lib" (splits by space, takes last)
-      // data.libraries should contain allOf("test", "style", "some.lib", "other.lib")
-      // data.imageCount should be(1)
-      // data.linkCount should be(1)
       data.libraries should contain ("lib")
     }
   }
@@ -80,7 +70,6 @@ class DataSpec extends AnyWordSpec with Matchers {
       val lines = List("<script src='js/jquery.min.js'></script>", "import de.htwg.Scraper")
       val data = Data.fromContent(lines, "test")
       data.libraries should contain allOf ("jquery", "Scraper")
-      // data.libraries should not contain ("js")
     }
     "calculate complexity correctly" in {
       val data = Data.fromContent(List("if (x) { for (y) { match z } }"), "test")

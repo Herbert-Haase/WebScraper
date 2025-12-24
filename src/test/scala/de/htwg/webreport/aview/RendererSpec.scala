@@ -59,13 +59,13 @@ class RendererSpec extends AnyWordSpec with Matchers {
       val renderer = new LineNumberDecorator(new SimpleReport())
       val output = renderer.render(data, 40)
       
-      output should include(" 1. │ First") // Hits both decorator logics
+      output should include(" 1. │ First") 
     }
   }
   "A SimpleReport" should {
     "handle very narrow widths by defaulting to 80" in {
       val renderer = new SimpleReport()
-      val output = renderer.render(sampleData, 10) // width < 20
+      val output = renderer.render(sampleData, 10)
       output should include("─" * 78) 
     }
     

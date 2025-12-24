@@ -38,7 +38,6 @@ abstract class ReportTemplate extends Renderer {
   ╚███╔███╔╝███████╗██████╔╝██║  ██║███████╗██║     ╚██████╔╝██║  ██║   ██║   
 ╚══╝╚══╝ ╚══════╝╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝      ╚═════╝ ╚═╝  ╚═╝   ╚═╝"""
 
-    // 1. Render Logo (Above the box, no top border)
     logo.split("\n").filter(_.trim.nonEmpty).foreach { line =>
       val padding = Math.max(0, (width - line.length) / 2)
       b.append(" " * padding + line + "\n")
@@ -46,10 +45,8 @@ abstract class ReportTemplate extends Renderer {
     
     b.append("\n") // Spacer
     
-    // 2. Start Box
     b.append(buildHeader(width))
 
-    // 3. Messages
     val msg = List(
       "Type 'download <url>' to fetch a website,",
       "'text' and then put in text,",
@@ -65,7 +62,6 @@ abstract class ReportTemplate extends Renderer {
       b.append(s"│ ${" " * padding}$text${" " * rightPadding} │\n")
     }
 
-    // 4. End Box (The only bottom)
     b.append(buildFooter(width))
     
     b.toString()

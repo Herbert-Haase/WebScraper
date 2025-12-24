@@ -54,7 +54,6 @@ class sessionManagerSpec extends AnyWordSpec with Matchers {
 
     "handle download failure with specific message" in {
       val sessionManager = createsessionManager()
-      // This triggers the Success/Failure match branch in DownloadCommand
       sessionManager.downloadFromUrl("http://non-existent-domain-12345.com")
       
       sessionManager.data.displayLines.mkString should include("Error")

@@ -56,11 +56,11 @@ object Data {
       .map(_.split(" ").lastOption.getOrElse("?"))
 
     val allLibs = (webLibs ++ codeLibs)
-      .map(_.split("/").last)               // Get filename
-      .map(_.takeWhile(_ != '?'))           // Remove query params
-      .map(_.replaceAll("""(\.min)?\.(js|css)$""", "")) // Strip extensions
-      .map(_.split("\\.").last)             // <--- RESTORED: Get 'Scraper' from 'de.htwg.Scraper'
-      .map(_.replaceAll("""[-._][0-9a-fA-F]{8,}.*$""", "")) // Clean hashes
+      .map(_.split("/").last)         
+      .map(_.takeWhile(_ != '?'))     
+      .map(_.replaceAll("""(\.min)?\.(js|css)$""", ""))
+      .map(_.split("\\.").last)
+      .map(_.replaceAll("""[-._][0-9a-fA-F]{8,}.*$""", ""))
       .distinct
       .filter(_.length > 1)
     val complexityScore = words.count(w => Set("if", "else", "for", "while", "case", "catch", "match", "try").contains(w))

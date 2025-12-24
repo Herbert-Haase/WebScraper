@@ -6,7 +6,6 @@ import scala.io.Source
 import scala.util.Using
 import scala.util.{Try, Success, Failure}
 
-// Concrete Implementation
 class SimpleWebClient extends WebClientTrait {
   override def get(url: String): Try[String] = Try {
     val source = Source.fromURL(url)

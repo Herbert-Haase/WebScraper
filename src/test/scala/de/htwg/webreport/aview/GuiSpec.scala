@@ -46,7 +46,6 @@ class GuiSpec extends AnyWordSpec with Matchers {
 
     "filter and identify famous libraries from a list" in {
       val input = List("react-v18", "custom-lib", "de.htwg.Scraper", "angular-min")
-      // Logic should find libraries containing the famous keywords
       val result = GuiLogic.getVisibleLibs(input, famous)
       
       result should contain allOf ("react-v18", "angular-min")
