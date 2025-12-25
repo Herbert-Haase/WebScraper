@@ -24,6 +24,7 @@ lazy val root = project
     ),
 
     coverageExcludedFiles := ".*Main\\.scala",
+    coverageExcludedPackages := "<empty>;de.htwg.webreport.WebReport;.*WebReportModule.*",
 
     fork := true,
     
