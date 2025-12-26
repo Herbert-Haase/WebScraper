@@ -44,7 +44,7 @@ object Data {
     val words = text.toLowerCase.replaceAll("[^a-z]+", " ").trim.split("\\s+").filter(_.nonEmpty)
     
     // Stats
-    val mostCommon = if (words.isEmpty) Nil else words.groupMapReduce(identity)(_ => 1)(_ + _).toList.sortBy(_._2)(Ordering[Int].reverse).take(5)
+    val mostCommon = if (words.isEmpty) Nil else words.groupMapReduce(identity)(_ => 1)(_ + _).toList.sortBy(w => (-w._2, w._1)).take(5)
     
     // Regex Extraction
     val webLibRegex = """(?i)<(script|link)[^>]+(src|href)=["']([^"']+)["']""".r
