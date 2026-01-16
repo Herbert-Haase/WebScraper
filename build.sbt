@@ -23,7 +23,7 @@ lazy val root = project
       "com.typesafe.play" %% "play-json" % "2.10.4"
     ),
 
-    coverageExcludedFiles += ".*\\/de\\/htwg\\/webreport\\/(?:WebReport|Main|aview\\/(?:Tui|Gui))",
+    coverageExcludedFiles += ".*\\/de\\/htwg\\/webreport\\/(?:WebReport|Main|aview\\/(?:Tui|TuiState|Gui))",
 
     fork := true,
     
