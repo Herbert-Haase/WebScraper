@@ -27,6 +27,9 @@ object Main extends JFXApp3 {
     if (System.getProperty("testMode") != "true") {
       val gui = new Gui(sessionManager)
       stage = new PrimaryStage {
+        title = "WebReport"
+        width = 1100
+        height = 800
         scene = gui.createScene()
         
         onCloseRequest = e => {
