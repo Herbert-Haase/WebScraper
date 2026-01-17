@@ -10,6 +10,7 @@ import scalafx.scene.web.WebView
 import scalafx.stage.FileChooser
 import scalafx.geometry.Insets
 import scalafx.Includes._
+import scalafx.scene.input.{KeyEvent, KeyCode}
 import javafx.concurrent.Worker
 import javafx.beans.value.{ChangeListener, ObservableValue}
 import scalafx.scene.web.WebView
@@ -117,6 +118,19 @@ class Gui(sessionManager: SessionManagerTrait) extends Observer {
     val myScene = new Scene {
       root = mainLayout
       window.onChange { (_, _, newWindow) => if (newWindow != null) parentStage = newWindow }
+      onKeyPressed = (event: KeyEvent) => {
+        if (event.controlDown) {
+          event.code match {
+            case KeyCode.L => 
+              urlField.requestFocus()
+            case KeyCode.Z => 
+              sessionManager.undo()
+            case KeyCode.Y => 
+              sessionManager.redo()
+            case _ => 
+          }
+        }
+      }
     }
     val cssUrl = getClass.getResource("/style.css")
     if (cssUrl != null) myScene.stylesheets.add(cssUrl.toExternalForm)
