@@ -55,8 +55,10 @@ WebReport is a sophisticated Scala-based tool designed to analyze web pages and 
 ```bash
    ./docker-run.sh
 ```
+Required dependencies: docker, docker-buildx, xorg-xhost
 When run for the first time, docker container takes longer to build.
 It gets faster, through caching, on future uses.
+
 
 
 3. Run the application:
@@ -76,6 +78,7 @@ The GUI provides a visual dashboard for analyzing content.
   - **💾 Export Session**: Save your entire analysis history.
   - **↶ / ↷**: Undo or Redo your last action.
 - **Dashboard**: View real-time metrics, including the complexity score bar and detected libraries.
+- **Keyboard Shortcuts**: Ctrl+Z for Undo, Ctrl+Y for Redo, Ctrl+l for focusing url-bar
 
 ### Terminal User Interface (TUI)
 The TUI is perfect for quick analysis and keyboard-centric users.
