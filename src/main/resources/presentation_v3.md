@@ -23,10 +23,10 @@ style: |
   }
   .panel h1 { margin-top: 0; color: #0366d6; border-bottom: 2px solid #0366d6; }
   .panel h2 { color: #22863a; margin-top: 0; margin-bottom: 15px; }
-  .panel h3 { 
-    color: #0366d6; 
-    border-bottom: 1px solid #eaecef; 
-    margin-bottom: 15px; 
+  .panel h3 {
+    color: #0366d6;
+    border-bottom: 1px solid #eaecef;
+    margin-bottom: 15px;
     font-size: 1.2em;
     padding-bottom: 8px;
   }
@@ -37,7 +37,7 @@ style: |
   .panel th { padding: 10px 12px; text-align: left; border-bottom: 2px solid #0366d6; background: rgba(3, 102, 214, 0.1); }
   .panel td { padding: 10px 12px; border-bottom: 1px solid #eaecef; }
   .panel code { background: #f6f8fa; padding: 2px 6px; border-radius: 3px; }
-  
+
   .ascii {
     font-family: 'Fira Code', monospace;
     white-space: pre;
@@ -68,7 +68,7 @@ style: |
   .bar-purple { background: #6f42c1; }
   .bar-red { background: #d73a49; }
   .bar-orange { background:  #fd7e14; }
-  
+
   /* Width classes */
   .w-100 { width: 100%; }
   .w-95 { width: 95%; }
@@ -145,9 +145,9 @@ style: |
   <div class="ascii">
 ██╗    ██╗███████╗██████╗ ██████╗ ███████╗██████╗  ██████╗ ██████╗ ████████╗
 ██║    ██║██╔════╝██╔══██╗██╔══██╗██╔════╝██╔══██╗██╔═══██╗██╔══██╗╚══██╔══╝
-██║ █╗ ██║█████╗  ██████╔╝██████╔╝█████╗  ██████╔╝██║   ██║██████╔╝   ██║   
-██║███╗██║██╔══╝  ██╔══██╗██╔══██╗██╔══╝  ██╔═══╝ ██║   ██║██╔══██╗   ██║   
-╚███╔███╔╝███████╗██████╔╝██║  ██║███████╗██║     ╚██████╔╝██║  ██║   ██║   
+██║ █╗ ██║█████╗  ██████╔╝██████╔╝█████╗  ██████╔╝██║   ██║██████╔╝   ██║
+██║███╗██║██╔══╝  ██╔══██╗██╔══██╗██╔══╝  ██╔═══╝ ██║   ██║██╔══██╗   ██║
+╚███╔███╔╝███████╗██████╔╝██║  ██║███████╗██║     ╚██████╔╝██║  ██║   ██║
  ╚══╝╚══╝ ╚══════╝╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝      ╚═════╝ ╚═╝  ╚═╝   ╚═╝
   </div>
   <p>A blazingly fast analyzer for web content. </p>
@@ -158,7 +158,7 @@ style: |
 <div class="panel">
   <h2>Project Overview</h2>
   <p><strong>WebReport</strong> is a web content analysis tool built for Software Engineering education at HTWG. </p>
-  
+
   <h3>Key Features</h3>
   <ul>
     <li><strong>Web Content Download</strong> - Fetch and analyze websites</li>
@@ -174,14 +174,14 @@ style: |
 
 <div class="panel">
   <h2>Development Timeline</h2>
-  
+
   <div class="timeline">
     <div class="timeline-item"><span class="timeline-date">Oct 2025</span> <span class="timeline-desc">Project Initialization — Repository created</span></div>
     <div class="timeline-item"><span class="timeline-date">Nov 2025</span> <span class="timeline-desc">Core Development — MVC Architecture setup</span></div>
     <div class="timeline-item"><span class="timeline-date">Dec 2025</span> <span class="timeline-desc">Feature Implementation — TUI & GUI, Tests, Scoverage</span></div>
     <div class="timeline-item"><span class="timeline-date">Jan 2026</span> <span class="timeline-desc">Final Sprint — Docker, Coverage optimization, GUI improvements</span></div>
   </div>
-  
+
   <h3>Activity Intensity</h3>
   <div class="bar-row">
     <span class="bar-label">Oct 2025</span>
@@ -206,7 +206,7 @@ style: |
 <div class="panel">
   <h2>Commit Activity Distribution</h2>
   <p><em>Based on 105 commits (Oct 2025 - Jan 2026)</em></p>
-  
+
   <div class="bar-row">
     <span class="bar-label-larger">Feature Dev</span>
     <span class="bar-track"><span class="bar-fill bar-blue w-65"></span></span>
@@ -252,7 +252,7 @@ style: |
 
 <div class="panel">
   <h2>Technology Stack</h2>
-  
+
   <table>
     <tr><th>Component</th><th>Technology</th><th>Version</th></tr>
     <tr><td>Language</td><td>Scala 3</td><td>3.4.2</td></tr>
@@ -268,7 +268,7 @@ style: |
 
 <div class="panel">
   <h2>Codebase Structure</h2>
-  
+
   <div class="tree">
     <div><span class="tree-folder tree-folder-blue">src/main/scala/de/htwg/webreport/</span></div>
     <div>├── <span class="tree-folder tree-folder-blue">aview/</span> <span class="tree-bar"><span class="tree-bar-fill bar-blue w-80"></span></span> ~350 LOC</div>
@@ -293,7 +293,7 @@ style: |
 
 <div class="panel">
   <h2>Test Suite Overview</h2>
-  
+
   <table>
     <tr><th>Test File</th><th>Purpose</th></tr>
     <tr><td>WebReportSpec.scala</td><td>Integration tests</td></tr>
@@ -305,7 +305,7 @@ style: |
     <tr><td>DataSpec.scala</td><td>Data model tests</td></tr>
     <tr><td>ObserverSpec.scala</td><td>Observer pattern tests</td></tr>
   </table>
-  
+
   <p class="color-gray" style="font-style: italic; margin-top: 15px;">Exclusions: Main 87%, Tui 94%, TuiState 97%, Renderer 98%, Gui 64%</p>
 </div>
 
@@ -313,20 +313,20 @@ style: |
 
 <div class="panel">
   <h2>Architecture Overview</h2>
-  
+
   <div class="arch-layer arch-view">
     <strong class="color-blue">VIEW LAYER</strong><br>
     <span class="arch-box arch-box-blue">TUI (Terminal)</span>
     <span class="arch-box arch-box-blue">GUI (ScalaFX)</span>
-    <br><em class="color-gray" style="font-size: 0.8em;">← Observer P. | Template P. | Decorater P. | State P.</em>
+    <br><em class="color-gray" style="font-size: 0.8em;">← Observer P. | Template P. | State P. | Decorater P.</em>
   </div>
-  
+
   <div class="arch-layer arch-controller">
     <strong class="color-yellow">CONTROLLER LAYER</strong><br>
     <span class="arch-box arch-box-yellow">SessionManager</span>
     <br><em class="color-gray" style="font-size: 0.8em;">← Command Pattern | Memento Pattern</em>
   </div>
-  
+
   <div class="arch-layer arch-model">
     <strong class="color-green">MODEL LAYER</strong><br>
     <span class="arch-box arch-box-green">Analyzer</span>
@@ -341,13 +341,13 @@ style: |
 <div class="panel">
   <table>
     <tr><th>Pattern</th><th>Purpose</th><th>Location</th></tr>
-    <tr><td><strong>Observer</strong></td><td>UI Synchronization</td><td>util/Observer.scala</td></tr>
-    <tr><td><strong>Command</strong></td><td>Operation Encapsulation</td><td>util/Command.scala</td></tr>
-    <tr><td><strong>Memento</strong></td><td>Undo/Redo Support</td><td>util/Command.scala</td></tr>
-    <tr><td><strong>State</strong></td><td>TUI Mode Switching</td><td>aview/TuiState.scala</td></tr>
-    <tr><td><strong>Template Method</strong></td><td>Report Structure</td><td>aview/Renderer.scala</td></tr>
-    <tr><td><strong>Decorator</strong></td><td>Feature Extensions</td><td>aview/Renderer.scala</td></tr>
-    <tr><td><strong>Strategy</strong></td><td>Interchangeable Serialization</td><td>model/fileio/</td></tr>
+    <tr><td><strong class="color-blue">Observer</strong></td><td>UI Synchronization</td><td>util/Observer.scala</td></tr>
+    <tr><td><strong class="color-blue">Template Method</strong></td><td>Report Structure</td><td>aview/Renderer.scala</td></tr>
+    <tr><td><strong class="color-blue">State</strong></td><td>TUI Mode Switching</td><td>aview/TuiState.scala</td></tr>
+    <tr><td><strong class="color-blue">Decorator</strong></td><td>Feature Extensions</td><td>aview/Renderer.scala</td></tr>
+    <tr><td><strong class="color-yellow">Command</strong></td><td>Operation Encapsulation</td><td>util/Command.scala</td></tr>
+    <tr><td><strong class="color-yellow">Memento</strong></td><td>Undo/Redo Support</td><td>util/Command.scala</td></tr>
+    <tr><td><strong class="color-green">Strategy</strong></td><td>Interchangeable Serialization</td><td>model/fileio/</td></tr>
     <tr><td><strong>DI (Guice)</strong></td><td>Loose Coupling</td><td>WebReportModule.scala</td></tr>
   </table>
 </div>
@@ -356,7 +356,7 @@ style: |
 
 <div class="panel">
   <h2>Component Complexity</h2>
-  
+
   <div class="bar-row">
     <span class="bar-label-larger">SessionManager</span>
     <span class="bar-track"><span class="bar-fill bar-red w-95"></span></span>
@@ -387,7 +387,7 @@ style: |
     <span class="bar-track"><span class="bar-fill bar-green w-30"></span></span>
     <span class="bar-value">●●○○○</span>
   </div>
-  
+
   <p style="text-align: center; font-size: 0.85em;" class="color-gray">Low ◄─────────────────────────────► High</p>
 </div>
 
@@ -396,7 +396,7 @@ style: |
 
 <div class="panel">
   <h2>Dependencies</h2>
-  
+
   <div class="tree">
     <div><span class="tree-folder tree-folder-blue">WebReport 1.0.0</span></div>
     <div>├── org.scala-lang » scala3-library <span class="badge badge-gray">3.4.2</span></div>
@@ -419,7 +419,7 @@ style: |
 
 <div class="panel">
   <h2>CI/CD Pipeline</h2>
-  
+
   <h3>GitHub Actions Workflow</h3>
   <div class="pipeline">
     <div class="pipeline-step pipeline-active"> Push<br>Trigger</div>
@@ -432,7 +432,7 @@ style: |
     <span class="pipeline-arrow">→</span>
     <div class="pipeline-step pipeline-done">Coveralls<br>Report</div>
   </div>
-  
+
   <h3>Docker Build</h3>
   <div class="pipeline">
     <div class="pipeline-step">Dockerfile</div>
@@ -447,7 +447,7 @@ style: |
 
 <div class="panel">
   <h2>Deployment Options</h2>
-  
+
   <table>
     <tr><th>Method</th><th>Command</th><th>Description</th></tr>
     <tr><td><strong>Local Development</strong></td><td><code>sbt run</code></td><td>Launches TUI + GUI simultaneously</td></tr>
@@ -461,7 +461,7 @@ style: |
 
 <div class="panel">
   <h2>Key Takeaways</h2>
-  
+
   <ul style="line-height: 1.8;">
     <li>Clean MVC Architecture with clear layer separation</li>
     <li>8 Design Patterns applied in practice</li>
@@ -487,7 +487,7 @@ style: |
     </li>
     <li>
       <strong>License</strong><br>
-      MIT License — Free for educational and commercial use. 
+      MIT License — Free for educational and commercial use.
     </li>
     <li>
       <strong>Documentation</strong><br>
@@ -496,8 +496,8 @@ style: |
   </ul>
 
   <br>
-  
+
   <div style="text-align: center; font-style: italic;" class="color-gray">
-    Thank you for your attention!  Questions? 
+    Thank you for your attention!  Questions?
   </div>
 </div>
